@@ -43,7 +43,7 @@ IDENT_2B = "$2b$"
 _BNULL = b"\x00"
 
 # reference hash of "test", used in various self-checks
-TEST_HASH_2A = "$2a$04$5BJqKfqMQvV7nS.yUguNcueVirQqDBGaLXSqj.rs.pZPlNR0UX/HK"
+TEST_HASH_2A = f"{IDENT_2A}04$5BJqKfqMQvV7nS.yUguNcueVirQqDBGaLXSqj.rs.pZPlNR0UX/HK"
 
 
 def _detect_pybcrypt():
@@ -426,9 +426,9 @@ class _BcryptCommon(  # type: ignore[misc]
         result = safe_verify("test", TEST_HASH_2A)
         if result is NotImplemented:
             # 2a support is required, and should always be present
-            raise RuntimeError(f"{backend} lacks support for $2a$ hashes")
+            raise RuntimeError(f"{backend} lacks support for {IDENT_2A} hashes")
         if not result:
-            raise RuntimeError(f"{backend} incorrectly rejected $2a$ hash")
+            raise RuntimeError(f"{backend} incorrectly rejected {IDENT_2A} hash")
         assert_lacks_8bit_bug(IDENT_2A)
         if detect_wrap_bug(IDENT_2A):
             if backend == "os_crypt":
@@ -436,8 +436,8 @@ class _BcryptCommon(  # type: ignore[misc]
                 # they'll have proper 2b implementation which will be used for new hashes.
                 # so even if we didn't have a workaround, this bug wouldn't be a concern.
                 logger.debug(
-                    "%r backend has $2a$ bsd wraparound bug, enabling workaround",
-                    backend,
+                    "%r backend has %s bsd wraparound bug, enabling workaround",
+                    backend, IDENT_2A
                 )
             else:
                 # installed library has the bug -- want to let users know,
@@ -454,13 +454,13 @@ class _BcryptCommon(  # type: ignore[misc]
         # ----------------------------------------------------------------
         # check for 2y support
         # ----------------------------------------------------------------
-        test_hash_2y = TEST_HASH_2A.replace("2a", "2y")
+        test_hash_2y = TEST_HASH_2A.replace(IDENT_2A, IDENT_2Y)
         result = safe_verify("test", test_hash_2y)
         if result is NotImplemented:
             mixin_cls._lacks_2y_support = True
-            logger.debug("%r backend lacks $2y$ support, enabling workaround", backend)
+            logger.debug("%r backend lacks %s support, enabling workaround", backend, IDENT_2Y)
         elif not result:
-            raise RuntimeError(f"{backend} incorrectly rejected $2y$ hash")
+            raise RuntimeError(f"{backend} incorrectly rejected {IDENT_2Y} hash")
         else:
             # NOTE: Not using this as fallback candidate,
             #       lacks wide enough support across implementations.
@@ -474,13 +474,13 @@ class _BcryptCommon(  # type: ignore[misc]
         # ----------------------------------------------------------------
         # check for 2b support
         # ----------------------------------------------------------------
-        test_hash_2b = TEST_HASH_2A.replace("2a", "2b")
+        test_hash_2b = TEST_HASH_2A.replace(IDENT_2A, IDENT_2B)
         result = safe_verify("test", test_hash_2b)
         if result is NotImplemented:
             mixin_cls._lacks_2b_support = True
-            logger.debug("%r backend lacks $2b$ support, enabling workaround", backend)
+            logger.debug("%r backend lacks %s support, enabling workaround", backend, IDENT_2B)
         elif not result:
-            raise RuntimeError(f"{backend} incorrectly rejected $2b$ hash")
+            raise RuntimeError(f"{backend} incorrectly rejected {IDENT_2B} hash")
         else:
             mixin_cls._fallback_ident = IDENT_2B
             assert_lacks_8bit_bug(IDENT_2B)
@@ -581,7 +581,7 @@ class _BcryptCommon(  # type: ignore[misc]
         elif ident == IDENT_2X:
             # NOTE: shouldn't get here.
             # XXX: could check if backend does actually offer 'support'
-            raise RuntimeError("$2x$ hashes not currently supported by passlib")
+            raise RuntimeError(f"{IDENT_2X} hashes not currently supported by passlib")
 
         else:
             raise AssertionError(f"unexpected ident value: {ident!r}")
