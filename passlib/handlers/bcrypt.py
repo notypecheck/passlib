@@ -147,6 +147,7 @@ class _BcryptCommon(  # type: ignore[misc]
     # NOTE: these are only set on the backend mixin classes
     _workrounds_initialized = False
     _has_2a_wraparound_bug = False
+    _fails_on_wraparound_bug = False
     _lacks_20_support = False
     _lacks_2y_support = False
     _lacks_2b_support = False
@@ -372,7 +373,7 @@ class _BcryptCommon(  # type: ignore[misc]
                 ident.encode("ascii")
                 + b"04$R1lJ2gkNaoPGdafE.H.16.nVyh2niHsGJhayOHLMiXlI45o8/DU.6"
             )
-            if verify(secret, bug_hash):
+            if handled_verify_wrap_error(secret, bug_hash):
                 return True
 
             # if it doesn't have wraparound bug, make sure it *does* handle things
@@ -381,12 +382,26 @@ class _BcryptCommon(  # type: ignore[misc]
                 ident.encode("ascii")
                 + b"04$R1lJ2gkNaoPGdafE.H.16.1MKHPvmKwryeulRe225LKProWYwt9Oi"
             )
-            if not verify(secret, correct_hash):
+            if not handled_verify_wrap_error(mixin_cls.wrap_if_fails_on_wraparound_bug(secret), correct_hash):
                 raise RuntimeError(
                     f"{backend} backend failed to verify {ident} wraparound hash"
                 )
 
             return False
+
+        def handled_verify_wrap_error(secret, test_hash):
+            try:
+                return verify(secret, test_hash)
+            except ValueError as e:
+                if mixin_cls._fails_on_wraparound_bug:
+                    logger.warning(
+                        "trapped %r backend %r",
+                        backend,
+                        e,
+                        exc_info=True,
+                    )
+                    return False
+                raise e
 
         def assert_lacks_wrap_bug(ident):
             if not detect_wrap_bug(ident):
@@ -577,6 +592,12 @@ class _BcryptCommon(  # type: ignore[misc]
 
         return secret, ident
 
+    @classmethod
+    def wrap_if_fails_on_wraparound_bug(cls, secret):
+        return (secret[:cls.truncate_size] if cls._fails_on_wraparound_bug
+                                              and len(secret) > cls.truncate_size
+                else secret)
+
 
 class _NoBackend(_BcryptCommon):
     """
@@ -609,6 +630,7 @@ class _BcryptBackend(_BcryptCommon):
             return False
         try:
             version = metadata.version("bcrypt")
+            mixin_cls._fails_on_wraparound_bug = version >= "5.0.0"
         except Exception:
             logger.warning("(trapped) error reading bcrypt version", exc_info=True)
             version = "<unknown>"
