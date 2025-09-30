@@ -183,6 +183,7 @@ ignore = [
     "FLY",
     "UP031",
     "PLW2901",
+    "PLC0415", # `import` should be at the top-level of a file
 ]
 
 [tool.ruff.lint.per-file-ignores]

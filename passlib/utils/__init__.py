@@ -146,6 +146,9 @@ class SequenceMixin:
     def __eq__(self, other):
         return self._as_tuple() == other
 
+    def __hash__(self) -> int:
+        return hash(self._as_tuple())
+
     def __ne__(self, other):
         return not self.__eq__(other)
 
