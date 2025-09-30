@@ -187,6 +187,11 @@ class _bcrypt_test(HandlerCase):
                 self.addCleanup(os.environ.__delitem__, key)
             os.environ[key] = "true"
 
+        wrapped_correct_hashes = []
+        for secret, hash in self.known_correct_hashes:
+            wrapped_correct_hashes.append((self.handler.wrap_if_fails_on_wraparound_bug(secret), hash))
+        type(self).known_correct_hashes = wrapped_correct_hashes
+
         super().setUp()
 
         # silence this warning, will come up a bunch during testing of old 2a hashes.
