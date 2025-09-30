@@ -392,16 +392,17 @@ class _BcryptCommon(  # type: ignore[misc]
         def handled_verify_wrap_error(secret, test_hash):
             try:
                 return verify(secret, test_hash)
-            except ValueError as e:
-                if mixin_cls._fails_on_wraparound_bug:
+            except ValueError as err:
+                if mixin_cls._fails_on_wraparound_bug \
+                        and any(word in str(err) for word in ["password", str(mixin_cls.truncate_size)]):
                     logger.warning(
                         "trapped %r backend %r",
                         backend,
-                        e,
+                        err,
                         exc_info=True,
                     )
                     return False
-                raise e
+                raise err
 
         def assert_lacks_wrap_bug(ident):
             if not detect_wrap_bug(ident):
