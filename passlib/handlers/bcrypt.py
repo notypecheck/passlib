@@ -368,7 +368,7 @@ class _BcryptCommon(  # type: ignore[misc]
             """
 
             # Secret which will trip the wraparound bug, if present
-             secret = (b"0123456789"*26)[:255]
+            secret = (b"0123456789"*26)[:255]
 
             # Python bcrypt >= 5.0.0 will raise an exception on passwords greater than 72 characters,
             # whereas earlier versions without the wraparound bug silently truncated the input to 72
