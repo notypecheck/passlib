@@ -382,7 +382,7 @@ class _BcryptCommon(  # type: ignore[misc]
             except ValueError:
                 # Backend explicitly will not auto-truncate, truncate the password to 72 characters
                 secret = secret[:72]
-            
+
             # Check to make sure that the backend still hashes correctly; if not, we're in a failure case
             # not related to the original wraparound bug or bcrypt >= 5.0.0 input length restriction.
             correct_hash = (
