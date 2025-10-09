@@ -366,17 +366,25 @@ class _BcryptCommon(  # type: ignore[misc]
             NOTE: if in future we need to deliberately create hashes which have this bug,
                   can use something like 'hashpw(repeat_string(secret[:((1+secret) % 256) or 1]), 72)'
             """
-            # check if it exhibits wraparound bug
-            secret = (b"0123456789" * 26)[:255]
-            bug_hash = (
-                ident.encode("ascii")
-                + b"04$R1lJ2gkNaoPGdafE.H.16.nVyh2niHsGJhayOHLMiXlI45o8/DU.6"
-            )
-            if verify(secret, bug_hash):
-                return True
 
-            # if it doesn't have wraparound bug, make sure it *does* handle things
-            # correctly -- or we're in some weird third case.
+            # Secret which will trip the wraparound bug, if present
+            secret = (b"0123456789"*26)[:255]
+
+            # Python bcrypt >= 5.0.0 will raise an exception on passwords greater than 72 characters,
+            # whereas earlier versions without the wraparound bug silently truncated the input to 72
+            # characters. See if the exception is generated.
+            try:
+                bug_hash = ident.encode("ascii") + b"04$R1lJ2gkNaoPGdafE.H.16.nVyh2niHsGJhayOHLMiXlI45o8/DU.6"
+
+                # If we get here, the backend auto-truncates, test for wraparound bug
+                if verify(secret, bug_hash):
+                    return True
+            except ValueError:
+                # Backend explicitly will not auto-truncate, truncate the password to 72 characters
+                secret = secret[:72]
+
+            # Check to make sure that the backend still hashes correctly; if not, we're in a failure case
+            # not related to the original wraparound bug or bcrypt >= 5.0.0 input length restriction.
             correct_hash = (
                 ident.encode("ascii")
                 + b"04$R1lJ2gkNaoPGdafE.H.16.1MKHPvmKwryeulRe225LKProWYwt9Oi"
