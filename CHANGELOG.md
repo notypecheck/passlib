@@ -1,4 +1,9 @@
 ## 1.9.3 (2025-10-09)
+## Fix
+- Improve bcrypt version detection by @chapmajs
+
+## Build
+- Unpin bcrypt
 
 ## 1.9.2 (2025-10-01)
 
