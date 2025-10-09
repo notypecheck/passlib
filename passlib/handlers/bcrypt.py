@@ -615,20 +615,11 @@ class _BcryptBackend(_BcryptCommon):
             import bcrypt as _bcrypt
         except ImportError:  # pragma: no cover
             return False
-
-        # Attempt to get bcrypt backend version
-        version = '<unknown>'
-
         try:
-            # "New style" (793bef 2023-11-23) version
-            version = _bcrypt.__version__
-        except:
-            try:
-                # Old style verion
-                version = _bcrypt.__about__.__version__
-            except:
-                # Can't find version, leave it as '<unknown>'
-                log.warning("(trapped) error reading bcrypt version", exc_info=True)
+            version = metadata.version("bcrypt")
+        except Exception:
+            logger.warning("(trapped) error reading bcrypt version", exc_info=True)
+            version = "<unknown>"
 
         logger.debug("detected 'bcrypt' backend, version %r", version)
         return mixin_cls._finalize_backend_mixin(name, dryrun)
