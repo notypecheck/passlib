@@ -927,7 +927,7 @@ wheels = [
 
 [[package]]
 name = "libpass"
-version = "1.9.1.post0"
+version = "1.9.2"
 source = { editable = "." }
 
 [package.optional-dependencies]
@@ -975,7 +975,7 @@ test = [
 [package.metadata]
 requires-dist = [
     { name = "argon2-cffi", marker = "extra == 'argon2'", specifier = ">=18.2.0" },
-    { name = "bcrypt", marker = "extra == 'bcrypt'", specifier = "<5.0.0" },
+    { name = "bcrypt", marker = "extra == 'bcrypt'", specifier = ">=3.1.0" },
     { name = "cryptography", marker = "extra == 'totp'", specifier = ">=43.0.1" },
 ]
 provides-extras = ["argon2", "bcrypt", "totp"]
