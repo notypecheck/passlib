@@ -147,6 +147,7 @@ class _BcryptCommon(  # type: ignore[misc]
     # NOTE: these are only set on the backend mixin classes
     _workrounds_initialized = False
     _has_2a_wraparound_bug = False
+    _fails_on_long_secrets = False
     _lacks_20_support = False
     _lacks_2y_support = False
     _lacks_2b_support = False
@@ -382,9 +383,11 @@ class _BcryptCommon(  # type: ignore[misc]
                 # If we get here, the backend auto-truncates, test for wraparound bug
                 if verify(secret, bug_hash):
                     return True
-            except ValueError:
+            except ValueError as err:
+                if not mixin_cls.is_password_too_long(secret, err):
+                    raise
                 # Backend explicitly will not auto-truncate, truncate the password to 72 characters
-                secret = secret[:72]
+                secret = secret[:mixin_cls.truncate_size]
 
             # Check to make sure that the backend still hashes correctly; if not, we're in a failure case
             # not related to the original wraparound bug or bcrypt >= 5.0.0 input length restriction.
@@ -588,6 +591,30 @@ class _BcryptCommon(  # type: ignore[misc]
 
         return secret, ident
 
+    @classmethod
+    def is_password_too_long(cls, secret, err):
+        return (cls._fails_on_long_secrets
+                and "password" in str(err).lower()
+                and len(secret) > cls.truncate_size)
+
+    @classmethod
+    def hash_password(cls, backend, secret, config):
+        try:
+            return backend.hashpw(secret, config)
+        except ValueError as err:
+            if not cls.is_password_too_long(secret, err):
+                raise
+            if cls.truncate_error:
+               raise uh.exc.PasswordTruncateError(cls) from err
+            # silently truncate password to truncate_size bytes, and try again
+            return backend.hashpw(secret[:cls.truncate_size], config)
+
+    @classmethod
+    def using(cls, **kwds):
+        # set truncate_verify_reject if backend fails on long secrets and truncate_error is set
+        cls.truncate_verify_reject = cls._fails_on_long_secrets and cls.truncate_error
+        return super().using(**kwds)
+
 
 class _NoBackend(_BcryptCommon):
     """
@@ -620,6 +647,8 @@ class _BcryptBackend(_BcryptCommon):
             return False
         try:
             version = metadata.version("bcrypt")
+            # From bcrypt >= 5.0.0 is expected a failure on secrets greater than 72 characters
+            mixin_cls._fails_on_long_secrets = version >= "5.0.0"
         except Exception:
             logger.warning("(trapped) error reading bcrypt version", exc_info=True)
             version = "<unknown>"
@@ -654,7 +683,7 @@ class _BcryptBackend(_BcryptCommon):
         config = self._get_config(ident)
         if isinstance(config, str):
             config = config.encode("ascii")
-        hash = _bcrypt.hashpw(secret, config)
+        hash = self.hash_password(_bcrypt, secret, config)
         assert isinstance(hash, bytes)
         if not hash.startswith(config) or len(hash) != len(config) + 31:
             raise uh.exc.CryptBackendError(
@@ -696,7 +725,9 @@ class bcrypt(_NoBackend, _BcryptCommon):  # type: ignore[misc]
         * ``"2b"`` - latest revision of the official BCrypt algorithm, current default.
 
     :param bool truncate_error:
-        By default, BCrypt will silently truncate passwords larger than 72 bytes.
+        By default, BCrypt will silently truncate passwords larger than 72 bytes (in bcrypt < 5.0.0)
+        or raise a ValueError (in bcrypt >= 5.0.0).
+        Setting ``truncate_error=False`` will maintain backward compatibility by truncating long passwords silently.
         Setting ``truncate_error=True`` will cause :meth:`~passlib.ifc.PasswordHash.hash`
         to raise a :exc:`~passlib.exc.PasswordTruncateError` instead.
 
