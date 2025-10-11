@@ -2075,7 +2075,7 @@ class HandlerCase(TestCase):
         # setup vars
         # --------------------------------------------------
         # try to get versions w/ and w/o truncate_error set.
-        # set to None if policy isn't configruable
+        # set to None if policy isn't configurable
         size_error_type = exc.PasswordSizeError
         if "truncate_error" in handler.setting_kwds:
             without_error = handler.using(truncate_error=False)
