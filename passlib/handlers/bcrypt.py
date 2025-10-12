@@ -604,8 +604,7 @@ class _BcryptCommon(  # type: ignore[misc]
         except ValueError as err:
             if not cls.is_password_too_long(secret, err):
                 raise
-            if cls.truncate_error:
-               raise uh.exc.PasswordTruncateError(cls) from err
+            cls._check_truncate_policy(secret)
             # silently truncate password to truncate_size bytes, and try again
             return backend.hashpw(secret[:cls.truncate_size], config)
 
