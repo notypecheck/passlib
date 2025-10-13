@@ -29,6 +29,8 @@ from passlib.utils import (
 )
 from passlib.utils.binary import bcrypt64
 
+from packaging.version import Version
+
 _bcrypt = None  # dynamically imported by _load_backend_bcrypt()
 
 __all__ = [
@@ -621,7 +623,7 @@ class _BcryptBackend(_BcryptCommon):
         try:
             version = metadata.version("bcrypt")
 
-            if version >= "5.0.0":
+            if Version(version) >= Version("5.0.0"):
                 mixin_cls._backend_raises_on_truncate = True
         except Exception:
             logger.warning("(trapped) error reading bcrypt version", exc_info=True)
