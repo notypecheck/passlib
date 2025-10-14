@@ -2126,11 +2126,10 @@ class HandlerCase(TestCase):
 
             # verify should truncate long secret before comparing
             # (unless truncate_verify_reject is set)
-            if not (cand_hasher and cand_hasher.truncate_verify_reject):
-                assert (
-                    self.do_verify(long_secret, short_hash, handler=cand_hasher)
-                    == long_verify_success
-                )
+            assert (
+                self.do_verify(long_secret, short_hash, handler=cand_hasher)
+                == long_verify_success
+            )
 
         # --------------------------------------------------
         # do tests on <truncate_size+1> length secret,
