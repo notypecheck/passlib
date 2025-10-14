@@ -20,9 +20,10 @@ from warnings import warn
 from packaging.version import parse
 
 import passlib.utils.handlers as uh
+from passlib import exc
 from passlib._logging import logger
 from passlib.crypto.digest import compile_hmac
-from passlib.exc import PasslibHashWarning, PasslibSecurityError
+from passlib.exc import PasslibHashWarning, PasslibSecurityError, PasswordSizeError, PasswordTruncateError
 from passlib.utils import (
     repeat_string,
     to_unicode,
@@ -386,7 +387,7 @@ class _BcryptCommon(  # type: ignore[misc]
                 if verify(secret, bug_hash):
                     return True
             except ValueError as err:
-                if not mixin_cls.is_password_too_long(secret, err):
+                if not mixin_cls.is_secret_truncate_err(secret, err):
                     raise
                 # Backend explicitly will not auto-truncate, truncate the password to 72 characters
                 secret = secret[:mixin_cls.truncate_size]
@@ -594,27 +595,14 @@ class _BcryptCommon(  # type: ignore[misc]
         return secret, ident
 
     @classmethod
-    def is_password_too_long(cls, secret, err):
+    def is_secret_truncate_err(cls, secret, err):
+        if isinstance(err, PasswordTruncateError):
+            return True
+        if isinstance(err, PasswordSizeError):
+            return False
         return (cls._fails_on_long_secrets
                 and "password" in str(err).lower()
                 and len(secret) > cls.truncate_size)
-
-    @classmethod
-    def hash_password(cls, backend, secret, config):
-        try:
-            return backend.hashpw(secret, config)
-        except ValueError as err:
-            if not cls.is_password_too_long(secret, err):
-                raise
-            cls._check_truncate_policy(secret)
-            # silently truncate password to truncate_size bytes, and try again
-            return backend.hashpw(secret[:cls.truncate_size], config)
-
-    @classmethod
-    def using(cls, **kwds):
-        # set truncate_verify_reject if backend fails on long secrets and truncate_error is set
-        cls.truncate_verify_reject = cls._fails_on_long_secrets and cls.truncate_error
-        return super().using(**kwds)
 
 
 class _NoBackend(_BcryptCommon):
@@ -675,6 +663,32 @@ class _BcryptBackend(_BcryptCommon):
     #     assert result.startswith(eff_ident)
     #     return consteq(result, hash)
 
+    @classmethod
+    def _check_truncate_flag(cls, truncate_flag, secret):
+        assert cls.truncate_size is not None, "truncate_size must be set by subclass"
+        if truncate_flag and len(secret) > cls.truncate_size:
+            raise exc.PasswordTruncateError(cls)
+
+    @classmethod
+    def _handle_w_truncate(cls, func, truncate_flag, secret, *args, **kwargs):
+        """
+        Helper method to handle ValueError exceptions for passwords > 72 bytes.
+        Truncates password if needed and retries the operation.
+        """
+        try:
+            return func(secret, *args, **kwargs)
+        except ValueError as err:
+            # bcrypt >= 5.0.0 will raise ValueError on passwords > 72 bytes
+            if not cls.is_secret_truncate_err(secret, err):
+                raise
+            cls._check_truncate_flag(truncate_flag, secret)
+            # silently truncate password to truncate_size bytes, and try again
+            return func(secret[:cls.truncate_size], *args, **kwargs)
+
+    @classmethod
+    def verify(cls, secret, hash, **context):
+        return cls._handle_w_truncate(super().verify, cls.truncate_verify_reject, secret, hash, **context)
+
     def _calc_checksum(self, secret):
         # bcrypt behavior:
         #   secret must be bytes
@@ -684,7 +698,7 @@ class _BcryptBackend(_BcryptCommon):
         config = self._get_config(ident)
         if isinstance(config, str):
             config = config.encode("ascii")
-        hash = self.hash_password(_bcrypt, secret, config)
+        hash = self._handle_w_truncate(_bcrypt.hashpw, self.truncate_error, secret, config)
         assert isinstance(hash, bytes)
         if not hash.startswith(config) or len(hash) != len(config) + 31:
             raise uh.exc.CryptBackendError(
