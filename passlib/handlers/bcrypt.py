@@ -17,6 +17,8 @@ from importlib import metadata
 from importlib.util import find_spec
 from warnings import warn
 
+from packaging.version import parse
+
 import passlib.utils.handlers as uh
 from passlib._logging import logger
 from passlib.crypto.digest import compile_hmac
@@ -647,7 +649,7 @@ class _BcryptBackend(_BcryptCommon):
         try:
             version = metadata.version("bcrypt")
             # From bcrypt >= 5.0.0 is expected a failure on secrets greater than 72 characters
-            mixin_cls._fails_on_long_secrets = version >= "5.0.0"
+            mixin_cls._fails_on_long_secrets = parse(version) >= parse("5.0.0")
         except Exception:
             logger.warning("(trapped) error reading bcrypt version", exc_info=True)
             version = "<unknown>"
