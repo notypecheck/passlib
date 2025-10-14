@@ -220,7 +220,7 @@ class _bcrypt_test(HandlerCase):
                 hash = IDENT_2B + hash[4:]
             hash = to_bytes(hash)
             try:
-                return bcrypt.hashpw(secret, hash) == hash
+                return self.handler.verify(secret, hash.decode('ascii'))
             except ValueError:
                 raise ValueError(f"bcrypt rejected hash: {hash!r} (secret={secret!r})")
 
