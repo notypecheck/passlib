@@ -1997,10 +1997,11 @@ class HandlerCase(TestCase):
         validate 'truncate_error' setting & related attributes
         """
         # If it doesn't have truncate_size set,
-        # it shouldn't support truncate_error
+        # it shouldn't support truncate_error or truncate_verify_reject
         hasher = self.handler
         if hasher.truncate_size is None:
             assert "truncate_error" not in hasher.setting_kwds
+            assert "truncate_verify_reject" not in hasher.setting_kwds
             return
 
         # if hasher defaults to silently truncating,
@@ -2015,17 +2016,26 @@ class HandlerCase(TestCase):
             assert hasher.truncate_error
             return
 
-        # test value parsing
-        def parse_value(value):
-            return hasher.using(truncate_error=value).truncate_error
+        # helper function to test value parsing for truncate settings
+        def test_truncate_setting_parsing(setting_name, current_value):
+            """Test that a truncate setting correctly parses various input values"""
+            def parse_value(value):
+                return getattr(hasher.using(**{setting_name: value}), setting_name)
 
-        assert parse_value(None) == hasher.truncate_error
-        assert parse_value(True) is True
-        assert parse_value("true") is True
-        assert parse_value(False) is False
-        assert parse_value("false") is False
-        with pytest.raises(ValueError):
-            parse_value("xxx")
+            assert parse_value(None) == current_value
+            assert parse_value(True) is True
+            assert parse_value("true") is True
+            assert parse_value(False) is False
+            assert parse_value("false") is False
+            with pytest.raises(ValueError):
+                parse_value("xxx")
+
+        # test truncate_error value parsing
+        test_truncate_setting_parsing("truncate_error", hasher.truncate_error)
+
+        # test truncate_verify_reject value parsing if supported
+        if "truncate_verify_reject" in hasher.setting_kwds:
+            test_truncate_setting_parsing("truncate_verify_reject", hasher.truncate_verify_reject)
 
     def test_secret_wo_truncate_size(self):
         """

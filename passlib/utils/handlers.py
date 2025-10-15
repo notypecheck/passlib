@@ -469,24 +469,40 @@ class TruncateMixin(MinimalHandler):
     truncate_verify_reject = False
 
     @classmethod
-    def using(cls, truncate_error=None, **kwds):
+    def using(cls, truncate_error=None, truncate_verify_reject=None, **kwds):
         subcls = super().using(**kwds)
         if truncate_error is not None:
-            truncate_error = as_bool(truncate_error, param="truncate_error")
-            if truncate_error is not None:
-                subcls.truncate_error = truncate_error
+            subcls.truncate_error = as_bool(truncate_error, param="truncate_error")
+        if truncate_verify_reject is not None:
+            subcls.truncate_verify_reject = as_bool(truncate_verify_reject, param="truncate_verify_reject")
         return subcls
+
+    @classmethod
+    def _check_truncate_flag(cls, truncate_flag, secret):
+        """Check if secret exceeds truncate_size when truncate_flag is enabled."""
+        assert cls.truncate_size is not None, "truncate_size must be set by subclass"
+        if truncate_flag and len(secret) > cls.truncate_size:
+            raise exc.PasswordTruncateError(cls)
 
     @classmethod
     def _check_truncate_policy(cls, secret):
         """
-        make sure secret won't be truncated.
-        NOTE: this should only be called for .hash(), not for .verify(),
-        which should honor the .truncate_verify_reject policy.
+        Ensure secret won't be truncated during hashing.
+
+        Uses the truncate_error policy to determine whether to raise an error
+        if the secret exceeds the maximum allowed length.
         """
-        assert cls.truncate_size is not None, "truncate_size must be set by subclass"
-        if cls.truncate_error and len(secret) > cls.truncate_size:
-            raise exc.PasswordTruncateError(cls)
+        cls._check_truncate_flag(cls.truncate_error, secret)
+
+    @classmethod
+    def _check_verify_truncate_policy(cls, secret):
+        """
+        Ensure secret won't be truncated during verification.
+
+        Uses the truncate_verify_reject policy to determine whether to raise an error
+        if the secret exceeds the maximum allowed length during verification.
+        """
+        cls._check_truncate_flag(cls.truncate_verify_reject, secret)
 
 
 class GenericHandler(MinimalHandler):

@@ -20,7 +20,6 @@ from warnings import warn
 from packaging.version import parse
 
 import passlib.utils.handlers as uh
-from passlib import exc
 from passlib._logging import logger
 from passlib.crypto.digest import compile_hmac
 from passlib.exc import PasslibHashWarning, PasslibSecurityError, PasswordSizeError, PasswordTruncateError
@@ -105,7 +104,7 @@ class _BcryptCommon(  # type: ignore[misc]
     # PasswordHash
     # --------------------
     name = "bcrypt"
-    setting_kwds: tuple[str, ...] = ("salt", "rounds", "ident", "truncate_error")
+    setting_kwds: tuple[str, ...] = ("salt", "rounds", "ident", "truncate_error", "truncate_verify_reject")
 
     # --------------------
     # GenericHandler
@@ -664,12 +663,6 @@ class _BcryptBackend(_BcryptCommon):
     #     return consteq(result, hash)
 
     @classmethod
-    def _check_truncate_flag(cls, truncate_flag, secret):
-        assert cls.truncate_size is not None, "truncate_size must be set by subclass"
-        if truncate_flag and len(secret) > cls.truncate_size:
-            raise exc.PasswordTruncateError(cls)
-
-    @classmethod
     def _handle_w_truncate(cls, func, truncate_flag, secret, *args, **kwargs):
         """
         Helper method to handle ValueError exceptions for passwords > 72 bytes.
@@ -748,6 +741,15 @@ class bcrypt(_NoBackend, _BcryptCommon):  # type: ignore[misc]
 
         .. versionadded:: 1.7
 
+    :param bool truncate_verify_reject:
+        By default, BCrypt will silently truncate passwords larger than 72 bytes (in bcrypt < 5.0.0)
+        or raise a ValueError (in bcrypt >= 5.0.0).
+        Setting ``truncate_verify_reject=False`` will maintain backward compatibility by truncating long passwords silently.
+        Setting ``truncate_verify_reject=True`` will cause :meth:`~passlib.ifc.PasswordHash.verify`
+        to raise a :exc:`~passlib.exc.PasswordTruncateError` instead.
+
+        .. versionadded:: 1.10
+
     :type relaxed: bool
     :param relaxed:
         By default, providing an invalid value for one of the other
@@ -807,7 +809,7 @@ class _wrapped_bcrypt(bcrypt):
     """
 
     setting_kwds = tuple(
-        elem for elem in bcrypt.setting_kwds if elem not in ["truncate_error"]
+        elem for elem in bcrypt.setting_kwds if elem not in ["truncate_error", "truncate_verify_reject"]
     )
     truncate_size: int | None = None
 
