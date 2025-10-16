@@ -70,6 +70,8 @@ totp = [
 [dependency-groups]
 dev = [
     "ipython>=8.18.1",
+    "tox>=4.30.3",
+    "tox-uv>=1.28.1",
 ]
 lint = [
     "deptry>=0.23.0",
@@ -213,3 +215,20 @@ python_version = "3.9"
 
 follow_imports = "normal"
 ignore_missing_imports = false
+
+
+[tool.tox]
+env_list = ["bcryptv4", "bcryptv5"]
+
+[tool.tox.pytest]
+runner = "uv-venv-lock-runner"
+extras = ["argon2", "bcrypt", "totp"]
+commands = [["pytest", "-n", "auto", "--cov"]]
+
+[tool.tox.env.bcryptv4]
+base = ["pytest"]
+commands_pre = [["uv", "pip", "install", "bcrypt<5.0.0"]]
+
+[tool.tox.env.bcryptv5]
+base = ["pytest"]
+commands_pre = [["uv", "pip", "install", "bcrypt>=5.0.0"]]
