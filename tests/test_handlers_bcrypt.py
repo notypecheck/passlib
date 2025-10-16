@@ -220,9 +220,9 @@ class _bcrypt_test(HandlerCase):
                 hash = IDENT_2B + hash[4:]
             hash = to_bytes(hash)
             try:
-                return bcrypt.hashpw(secret, hash) == hash
-            except ValueError:
-                raise ValueError(f"bcrypt rejected hash: {hash!r} (secret={secret!r})")
+                return bcrypt.hashpw(secret[:72], hash) == hash
+            except ValueError as e:
+                raise ValueError(f"bcrypt rejected hash: {hash!r} (secret={secret!r}) with message: {str(e)}")
 
         return check_bcrypt
 
