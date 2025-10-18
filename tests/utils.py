@@ -2059,13 +2059,10 @@ class HandlerCase(TestCase):
         alt_secret = secret[:-1] + alt
         assert not self.do_verify(alt_secret, hash), "full password not used in digest"
 
-    def test_secret_w_truncate_size(self):
+    def test_secret_with_truncate_size(self):
         """
         test password size limits raise truncate_error (if appropriate)
         """
-        # --------------------------------------------------
-        # check if test is applicable
-        # --------------------------------------------------
         handler = self.handler
         truncate_size = handler.truncate_size
         if not truncate_size:
@@ -2075,7 +2072,7 @@ class HandlerCase(TestCase):
         # setup vars
         # --------------------------------------------------
         # try to get versions w/ and w/o truncate_error set.
-        # set to None if policy isn't configruable
+        # set to None if policy isn't configurable
         size_error_type = exc.PasswordSizeError
         if "truncate_error" in handler.setting_kwds:
             without_error = handler.using(truncate_error=False)
