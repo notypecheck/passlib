@@ -3,6 +3,8 @@ from __future__ import annotations
 import warnings
 from unittest import SkipTest, skipUnless
 
+import pytest
+
 from passlib import hash
 from passlib.utils import repeat_string
 from tests.test_ext_django import (
@@ -13,9 +15,6 @@ from tests.test_ext_django import (
 from tests.test_handlers import UPASS_TABLE, UPASS_USD
 from tests.test_handlers_argon2 import _base_argon2_test
 from tests.utils import HandlerCase, TestCase
-
-# module
-
 
 # standard string django uses
 UPASS_LETMEIN = "l\xe8tmein"
@@ -280,6 +279,7 @@ class django_pbkdf2_sha1_test(HandlerCase, _DjangoHelper):
 
 
 @skipUnless(hash.bcrypt.has_backend(), "no bcrypt backends available")
+@pytest.mark.usefixtures("bcrypt_backend_raises_on_wraparound_unittest")
 class django_bcrypt_test(HandlerCase, _DjangoHelper):
     """test django_bcrypt"""
 
@@ -320,6 +320,14 @@ class django_bcrypt_test(HandlerCase, _DjangoHelper):
             # omit multi-ident tests, only $2a$ counts for this class
             # XXX: enable this to check 2a / 2b?
             return None
+
+    def test_secret_with_truncate_size(self):
+        if not self.bcrypt_backend_raises_on_wraparound:
+            super().test_truncate_error_setting()
+
+    def test_77_fuzz_input(self, threaded: bool = False) -> None:
+        if not self.bcrypt_backend_raises_on_wraparound:  # type: ignore[attr-defined]
+            super().test_77_fuzz_input(threaded=threaded)
 
 
 @skipUnless(hash.bcrypt.has_backend(), "no bcrypt backends available")
