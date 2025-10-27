@@ -6,14 +6,10 @@ import bcrypt
 import pytest
 
 from passlib import hash
-from passlib.handlers.bcrypt import (
-    IDENT_2,
-    IDENT_2A,
-    IDENT_2B,
-    IDENT_2X,
-    IDENT_2Y,
-)
+from passlib.handlers.bcrypt import IDENT_2, IDENT_2A, IDENT_2B, IDENT_2X, IDENT_2Y
+from passlib.handlers.bcrypt import bcrypt as bcrypt_handler
 from passlib.utils import repeat_string, to_bytes
+from passlib.utils.handlers import GenericHandler
 from tests.test_handlers import UPASS_TABLE
 from tests.utils import TEST_MODE, HandlerCase
 from tests.utils_ import no_warnings
@@ -26,101 +22,7 @@ class _bcrypt_test(HandlerCase):
     reduce_default_rounds = True
     fuzz_salts_need_bcrypt_repair = True
 
-    known_correct_hashes = [
-        #
-        # from JTR 1.7.9
-        #
-        ("U*U*U*U*", "$2a$05$c92SVSfjeiCD6F2nAD6y0uBpJDjdRkt0EgeC4/31Rf2LUZbDRDE.O"),
-        ("U*U***U", "$2a$05$WY62Xk2TXZ7EvVDQ5fmjNu7b0GEzSzUXUh2cllxJwhtOeMtWV3Ujq"),
-        ("U*U***U*", "$2a$05$Fa0iKV3E2SYVUlMknirWU.CFYGvJ67UwVKI1E2FP6XeLiZGcH3MJi"),
-        ("*U*U*U*U", "$2a$05$.WRrXibc1zPgIdRXYfv.4uu6TD1KWf0VnHzq/0imhUhuxSxCyeBs2"),
-        ("", "$2a$05$Otz9agnajgrAe0.kFVF9V.tzaStZ2s1s4ZWi/LY4sw2k/MTVFj/IO"),
-        #
-        # test vectors from http://www.openwall.com/crypt v1.2
-        # note that this omits any hashes that depend on crypt_blowfish's
-        # various CVE-2011-2483 workarounds (hash 2a and \xff\xff in password,
-        # and any 2x hashes); and only contain hashes which are correct
-        # under both crypt_blowfish 1.2 AND OpenBSD.
-        #
-        ("U*U", "$2a$05$CCCCCCCCCCCCCCCCCCCCC.E5YPO9kmyuRGyh0XouQYb4YMJKvyOeW"),
-        ("U*U*", "$2a$05$CCCCCCCCCCCCCCCCCCCCC.VGOzA784oUp/Z0DY336zx7pLYAy0lwK"),
-        ("U*U*U", "$2a$05$XXXXXXXXXXXXXXXXXXXXXOAcXxm9kjPGEMsLznoKqmqw7tc8WCx4a"),
-        ("", "$2a$05$CCCCCCCCCCCCCCCCCCCCC.7uG0VCzI2bS7j6ymqJi9CdcdxiRTWNy"),
-        (
-            "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-            "0123456789chars after 72 are ignored",
-            "$2a$05$abcdefghijklmnopqrstuu5s2v8.iXieOjg/.AySBTTZIIVFJeBui",
-        ),
-        (b"\xa3", "$2a$05$/OK.fbVrR/bpIqNJ5ianF.Sa7shbm4.OzKpvFnX1pQLmQW96oUlCq"),
-        (
-            b"\xff\xa3345",
-            "$2a$05$/OK.fbVrR/bpIqNJ5ianF.nRht2l/HRhr6zmCp9vYUvvsqynflf9e",
-        ),
-        (b"\xa3ab", "$2a$05$/OK.fbVrR/bpIqNJ5ianF.6IflQkJytoRVc1yuaNtHfiuq.FRlSIS"),
-        (
-            b"\xaa" * 72 + b"chars after 72 are ignored as usual",
-            "$2a$05$/OK.fbVrR/bpIqNJ5ianF.swQOIzjOiJ9GHEPuhEkvqrUyvWhEMx6",
-        ),
-        (
-            b"\xaa\x55" * 36,
-            "$2a$05$/OK.fbVrR/bpIqNJ5ianF.R9xrDjiycxMbQE2bp.vgqlYpW5wx2yy",
-        ),
-        (
-            b"\x55\xaa\xff" * 24,
-            "$2a$05$/OK.fbVrR/bpIqNJ5ianF.9tQZzcJfm3uj2NvJ/n5xkhpqLrMpWCe",
-        ),
-        # keeping one of their 2y tests, because we are supporting that.
-        (b"\xa3", "$2y$05$/OK.fbVrR/bpIqNJ5ianF.Sa7shbm4.OzKpvFnX1pQLmQW96oUlCq"),
-        #
-        # 8bit bug (fixed in 2y/2b)
-        #
-        # NOTE: see assert_lacks_8bit_bug() for origins of this test vector.
-        (b"\xd1\x91", "$2y$05$6bNw2HLQYeqHYyBfLMsv/OUcZd0LKP39b87nBw3.S2tVZSqiQX6eu"),
-        #
-        # bsd wraparound bug (fixed in 2b)
-        #
-        # NOTE: if backend is vulnerable, password will hash the same as '0'*72
-        #       ("$2a$04$R1lJ2gkNaoPGdafE.H.16.nVyh2niHsGJhayOHLMiXlI45o8/DU.6"),
-        #       rather than same as ("0123456789"*8)[:72]
-        # 255 should be sufficient, but checking
-        (
-            ("0123456789" * 26)[:254],
-            "$2a$04$R1lJ2gkNaoPGdafE.H.16.1MKHPvmKwryeulRe225LKProWYwt9Oi",
-        ),
-        (
-            ("0123456789" * 26)[:255],
-            "$2a$04$R1lJ2gkNaoPGdafE.H.16.1MKHPvmKwryeulRe225LKProWYwt9Oi",
-        ),
-        (
-            ("0123456789" * 26)[:256],
-            "$2a$04$R1lJ2gkNaoPGdafE.H.16.1MKHPvmKwryeulRe225LKProWYwt9Oi",
-        ),
-        (
-            ("0123456789" * 26)[:257],
-            "$2a$04$R1lJ2gkNaoPGdafE.H.16.1MKHPvmKwryeulRe225LKProWYwt9Oi",
-        ),
-        #
-        # from py-bcrypt tests
-        #
-        ("", "$2a$06$DCq7YPn5Rq63x1Lad4cll.TV4S6ytwfsfvkgY8jIucDrjc8deX1s."),
-        ("a", "$2a$10$k87L/MF28Q673VKh8/cPi.SUl7MU/rWuSiIDDFayrKk/1tBsSQu4u"),
-        ("abc", "$2a$10$WvvTPHKwdBJ3uk0Z37EMR.hLA2W6N9AEBhEgrAOljy2Ae5MtaSIUi"),
-        (
-            "abcdefghijklmnopqrstuvwxyz",
-            "$2a$10$fVH8e28OQRj9tqiDXs1e1uxpsjN0c7II7YPKXua2NAKYvM6iQk7dq",
-        ),
-        (
-            "~!@#$%^&*()      ~!@#$%^&*()PNBFRD",
-            "$2a$10$LgfYWkbzEvQ4JakH7rOvHe0y8pHKF9OaFgwUZ2q7W2FFZmZzJYlfS",
-        ),
-        #
-        # custom test vectors
-        #
-        # ensures utf-8 used for unicode
-        (UPASS_TABLE, "$2a$05$Z17AXnnlpzddNUvnC6cZNOSwMA/8oNiKnHTHTwLlBijfucQQlHjaG"),
-        # ensure 2b support
-        (UPASS_TABLE, "$2b$05$Z17AXnnlpzddNUvnC6cZNOSwMA/8oNiKnHTHTwLlBijfucQQlHjaG"),
-    ]
+    known_correct_hashes = []
 
     if TEST_MODE("full"):
         #
@@ -356,8 +258,153 @@ class _bcrypt_test(HandlerCase):
         assert not bcrypt.needs_update(GOOD1)
 
 
+@pytest.mark.usefixtures("bcrypt_backend_raises_on_wraparound_unittest")
+class bcrypt_test(_bcrypt_test):
+    __test__ = False
+
+    def test_secret_with_truncate_size(self) -> None:
+        if not self.bcrypt_backend_raises_on_wraparound:  # type: ignore[attr-defined]
+            super().test_secret_with_truncate_size()
+
+    def test_77_fuzz_input(self, threaded: bool = False) -> None:
+        if not self.bcrypt_backend_raises_on_wraparound:  # type: ignore[attr-defined]
+            super().test_77_fuzz_input(threaded=threaded)
+
+
 # create test cases for specific backends
-bcrypt_bcrypt_test = _bcrypt_test.create_backend_case("bcrypt")
+bcrypt_bcrypt_test = bcrypt_test.create_backend_case("bcrypt")
+
+
+@pytest.fixture(scope="session")
+def handler() -> type[GenericHandler]:
+    return bcrypt_handler
+
+
+@pytest.mark.parametrize(
+    ("secret", "hash"),
+    [
+        #
+        # from JTR 1.7.9
+        #
+        ("U*U*U*U*", "$2a$05$c92SVSfjeiCD6F2nAD6y0uBpJDjdRkt0EgeC4/31Rf2LUZbDRDE.O"),
+        ("U*U***U", "$2a$05$WY62Xk2TXZ7EvVDQ5fmjNu7b0GEzSzUXUh2cllxJwhtOeMtWV3Ujq"),
+        ("U*U***U*", "$2a$05$Fa0iKV3E2SYVUlMknirWU.CFYGvJ67UwVKI1E2FP6XeLiZGcH3MJi"),
+        ("*U*U*U*U", "$2a$05$.WRrXibc1zPgIdRXYfv.4uu6TD1KWf0VnHzq/0imhUhuxSxCyeBs2"),
+        ("", "$2a$05$Otz9agnajgrAe0.kFVF9V.tzaStZ2s1s4ZWi/LY4sw2k/MTVFj/IO"),
+        #
+        # test vectors from http://www.openwall.com/crypt v1.2
+        # note that this omits any hashes that depend on crypt_blowfish's
+        # various CVE-2011-2483 workarounds (hash 2a and \xff\xff in password,
+        # and any 2x hashes); and only contain hashes which are correct
+        # under both crypt_blowfish 1.2 AND OpenBSD.
+        #
+        ("U*U", "$2a$05$CCCCCCCCCCCCCCCCCCCCC.E5YPO9kmyuRGyh0XouQYb4YMJKvyOeW"),
+        ("U*U*", "$2a$05$CCCCCCCCCCCCCCCCCCCCC.VGOzA784oUp/Z0DY336zx7pLYAy0lwK"),
+        ("U*U*U", "$2a$05$XXXXXXXXXXXXXXXXXXXXXOAcXxm9kjPGEMsLznoKqmqw7tc8WCx4a"),
+        ("", "$2a$05$CCCCCCCCCCCCCCCCCCCCC.7uG0VCzI2bS7j6ymqJi9CdcdxiRTWNy"),
+        (
+            "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            "0123456789chars after 72 are ignored",
+            "$2a$05$abcdefghijklmnopqrstuu5s2v8.iXieOjg/.AySBTTZIIVFJeBui",
+        ),
+        (b"\xa3", "$2a$05$/OK.fbVrR/bpIqNJ5ianF.Sa7shbm4.OzKpvFnX1pQLmQW96oUlCq"),
+        (
+            b"\xff\xa3345",
+            "$2a$05$/OK.fbVrR/bpIqNJ5ianF.nRht2l/HRhr6zmCp9vYUvvsqynflf9e",
+        ),
+        (b"\xa3ab", "$2a$05$/OK.fbVrR/bpIqNJ5ianF.6IflQkJytoRVc1yuaNtHfiuq.FRlSIS"),
+        (
+            b"\xaa" * 72 + b"chars after 72 are ignored as usual",
+            "$2a$05$/OK.fbVrR/bpIqNJ5ianF.swQOIzjOiJ9GHEPuhEkvqrUyvWhEMx6",
+        ),
+        (
+            b"\xaa\x55" * 36,
+            "$2a$05$/OK.fbVrR/bpIqNJ5ianF.R9xrDjiycxMbQE2bp.vgqlYpW5wx2yy",
+        ),
+        (
+            b"\x55\xaa\xff" * 24,
+            "$2a$05$/OK.fbVrR/bpIqNJ5ianF.9tQZzcJfm3uj2NvJ/n5xkhpqLrMpWCe",
+        ),
+        # keeping one of their 2y tests, because we are supporting that.
+        (b"\xa3", "$2y$05$/OK.fbVrR/bpIqNJ5ianF.Sa7shbm4.OzKpvFnX1pQLmQW96oUlCq"),
+        #
+        # 8bit bug (fixed in 2y/2b)
+        #
+        # NOTE: see assert_lacks_8bit_bug() for origins of this test vector.
+        (b"\xd1\x91", "$2y$05$6bNw2HLQYeqHYyBfLMsv/OUcZd0LKP39b87nBw3.S2tVZSqiQX6eu"),
+        #
+        # bsd wraparound bug (fixed in 2b)
+        #
+        # NOTE: if backend is vulnerable, password will hash the same as '0'*72
+        #       ("$2a$04$R1lJ2gkNaoPGdafE.H.16.nVyh2niHsGJhayOHLMiXlI45o8/DU.6"),
+        #       rather than same as ("0123456789"*8)[:72]
+        # 255 should be sufficient, but checking
+        (
+            ("0123456789" * 26)[:254],
+            "$2a$04$R1lJ2gkNaoPGdafE.H.16.1MKHPvmKwryeulRe225LKProWYwt9Oi",
+        ),
+        (
+            ("0123456789" * 26)[:255],
+            "$2a$04$R1lJ2gkNaoPGdafE.H.16.1MKHPvmKwryeulRe225LKProWYwt9Oi",
+        ),
+        (
+            ("0123456789" * 26)[:256],
+            "$2a$04$R1lJ2gkNaoPGdafE.H.16.1MKHPvmKwryeulRe225LKProWYwt9Oi",
+        ),
+        (
+            ("0123456789" * 26)[:257],
+            "$2a$04$R1lJ2gkNaoPGdafE.H.16.1MKHPvmKwryeulRe225LKProWYwt9Oi",
+        ),
+        #
+        # from py-bcrypt tests
+        #
+        ("", "$2a$06$DCq7YPn5Rq63x1Lad4cll.TV4S6ytwfsfvkgY8jIucDrjc8deX1s."),
+        ("a", "$2a$10$k87L/MF28Q673VKh8/cPi.SUl7MU/rWuSiIDDFayrKk/1tBsSQu4u"),
+        ("abc", "$2a$10$WvvTPHKwdBJ3uk0Z37EMR.hLA2W6N9AEBhEgrAOljy2Ae5MtaSIUi"),
+        (
+            "abcdefghijklmnopqrstuvwxyz",
+            "$2a$10$fVH8e28OQRj9tqiDXs1e1uxpsjN0c7II7YPKXua2NAKYvM6iQk7dq",
+        ),
+        (
+            "~!@#$%^&*()      ~!@#$%^&*()PNBFRD",
+            "$2a$10$LgfYWkbzEvQ4JakH7rOvHe0y8pHKF9OaFgwUZ2q7W2FFZmZzJYlfS",
+        ),
+        #
+        # custom test vectors
+        #
+        # ensures utf-8 used for unicode
+        (UPASS_TABLE, "$2a$05$Z17AXnnlpzddNUvnC6cZNOSwMA/8oNiKnHTHTwLlBijfucQQlHjaG"),
+        # ensure 2b support
+        (UPASS_TABLE, "$2b$05$Z17AXnnlpzddNUvnC6cZNOSwMA/8oNiKnHTHTwLlBijfucQQlHjaG"),
+    ],
+)
+def test_known_hashes(
+    secret: str,
+    hash: str,
+    bcrypt_backend_raises_on_wraparound: bool,
+    handler: GenericHandler,
+) -> None:
+    assert handler.truncate_size
+
+    if bcrypt_backend_raises_on_wraparound and len(secret) > handler.truncate_size:
+        return
+
+    assert handler.verify(secret=secret, hash=hash)
+
+
+def test_with_truncate_size(
+    handler: GenericHandler,
+    bcrypt_backend_raises_on_wraparound: bool,
+) -> None:
+    if bcrypt_backend_raises_on_wraparound:
+        return
+
+    assert handler.truncate_size
+
+    long_secret = "abc" * handler.truncate_size
+
+    hashed = handler.hash(secret=long_secret)
+    assert handler.verify(secret=long_secret[: handler.truncate_size], hash=hashed)
 
 
 class _bcrypt_sha256_test(HandlerCase):
@@ -591,5 +638,4 @@ class _bcrypt_sha256_test(HandlerCase):
         assert result == bcrypt_digest
 
 
-# create test cases for specific backends
 bcrypt_sha256_bcrypt_test = _bcrypt_sha256_test.create_backend_case("bcrypt")
