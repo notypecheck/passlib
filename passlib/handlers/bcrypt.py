@@ -599,7 +599,7 @@ class _NoBackend(_BcryptCommon):
         self._stub_requires_backend()
         # NOTE: have to use super() here so that we don't recursively
         #       call subclass's wrapped _calc_checksum, e.g. bcrypt_sha256._calc_checksum
-        return self._calc_checksum(secret)
+        return super(bcrypt, self)._calc_checksum(secret)
 
 
 class _BcryptBackend(_BcryptCommon):
@@ -770,17 +770,17 @@ class _wrapped_bcrypt(bcrypt):
     # def hash(cls, secret, **kwds):
     #     # bypass bcrypt backend overriding this method
     #     # XXX: would wrapping bcrypt make this easier than subclassing it?
-    #     return super().hash(secret, **kwds)
+    #     return super(_BcryptCommon, cls).hash(secret, **kwds)
     #
     # @classmethod
     # def verify(cls, secret, hash):
     #     # bypass bcrypt backend overriding this method
-    #     return super().verify(secret, hash)
+    #     return super(_BcryptCommon, cls).verify(secret, hash)
     #
     # @classmethod
     # def genhash(cls, secret, hash):
     #     # bypass bcrypt backend overriding this method
-    #     return super().genhash(secret, hash)
+    #     return super(_BcryptCommon, cls).genhash(secret, hash)
 
     @classmethod
     def _check_truncate_policy(cls, secret):

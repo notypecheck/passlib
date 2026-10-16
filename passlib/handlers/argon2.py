@@ -700,7 +700,7 @@ class _NoBackend(_Argon2Common):
         self._stub_requires_backend()
         # NOTE: have to use super() here so that we don't recursively
         #       call subclass's wrapped _calc_checksum
-        return super()._calc_checksum(secret)
+        return super(argon2, self)._calc_checksum(secret)
 
 
 class _CffiBackend(_Argon2Common):
