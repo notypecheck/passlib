@@ -1,4 +1,6 @@
 import os
+import subprocess
+import sys
 import warnings
 from base64 import b64encode
 
@@ -405,6 +407,37 @@ def test_with_truncate_size(
 
     hashed = handler.hash(secret=long_secret)
     assert handler.verify(secret=long_secret[: handler.truncate_size], hash=hashed)
+
+
+@pytest.mark.parametrize(
+    "using_kwds",
+    [{}, {"version": 1}],
+    ids=["v2", "v1"],
+)
+def test_bcrypt_sha256_first_call_verifies_in_fresh_process(using_kwds):
+    """
+    Regression test for issue #27.
+    """
+
+    def _run_fresh_interpreter(code: str) -> str:
+        proc = subprocess.run(
+            [sys.executable, "-c", code],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        if proc.returncode != 0:
+            raise AssertionError(f"fresh-interpreter snippet failed:\n{proc.stderr}")
+        return proc.stdout.strip()
+
+    extra = ", ".join(f"{k}={v!r}" for k, v in using_kwds.items())
+    using_call = f"bcrypt_sha256.using(rounds=4{', ' + extra if extra else ''})"
+    code = (
+        "from passlib.hash import bcrypt_sha256\n"
+        f"h = {using_call}.hash('password')\n"
+        "print(bcrypt_sha256.verify('password', h))\n"
+    )
+    assert _run_fresh_interpreter(code) == "True"
 
 
 class _bcrypt_sha256_test(HandlerCase):
