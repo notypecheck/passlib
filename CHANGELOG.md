@@ -1,3 +1,9 @@
+## 1.9.4 (2026-10-17)
+
+### Fix
+
+- Fixes regression in backend logic for `argon2` and `bcrypt`
+
 ## 1.9.3 (2025-10-09)
 ## Fix
 - Improve bcrypt version detection by @chapmajs
