@@ -148,6 +148,7 @@ _locations = dict(
     phpass="passlib.handlers.phpass",
     plaintext="passlib.handlers.misc",
     postgres_md5="passlib.handlers.postgres",
+    postgres_scram_sha256="passlib.handlers.postgres",
     roundup_plaintext="passlib.handlers.roundup",
     scram="passlib.handlers.scram",
     scrypt="passlib.handlers.scrypt",

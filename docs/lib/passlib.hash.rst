@@ -217,6 +217,7 @@ not seen outside those specific contexts:
     passlib.hash.mysql323
     passlib.hash.mysql41
     passlib.hash.postgres_md5
+    passlib.hash.postgres_scram_sha256
     passlib.hash.oracle10
     passlib.hash.oracle11
 

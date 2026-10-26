@@ -1347,6 +1347,130 @@ class postgres_md5_test(UserHandlerMixin, HandlerCase):
     ]
 
 
+class postgres_scram_sha256_test(HandlerCase):
+    handler = hash.postgres_scram_sha256
+    known_correct_hashes = [
+        #
+        # generated using postgres 18.6
+        #
+        (
+            "hashcat",
+            "SCRAM-SHA-256$4096:MLsvyl6NyrTcXq6RU0+umg==$fy/TJ7RZ9QNlfP6mYDjUFj8R54ubC8BEiBnM7pjiSAQ=:w7o0lca+0YNSNMKbZDl+evbS/oIwxI/YoQgrhncTp78=",
+        ),
+        (
+            "password",
+            "SCRAM-SHA-256$4096:qE12cIqZ4NbSTha3vHwnUQ==$hbulmmufyG84BS1ysOzVpkWC4vagn5R4GdHoisalWew=:PrGAnGUKJ373dqDPur5H7YRFQ0Sh9SMly6G3lnsLiLY=",
+        ),
+        (
+            "correct horse battery staple",
+            "SCRAM-SHA-256$4096:ZUeub6IxRxOkOpuhb92UGQ==$cBOPUUhq0V7JXv24i1WhxkEVc6ur29K/qxSHvk+5SdE=:Y4ZFtckUzqPiqKfCAJNUf7BdEbpb6rorSXDYLaSKqm8=",
+        ),
+        (
+            "p@$$:w0rd#'\"\\",
+            "SCRAM-SHA-256$4096:chexT8eFgiq8N0HPvm970A==$z0Tau08fX1dIIxY+vRtS1Sv+Xf2WWuL/jarQlDAYKAE=:hHXqIrq/tJ/BfRxsGY+uIwWzUHIdzNIsxZzmj85dmUc=",
+        ),
+        (
+            "a",
+            "SCRAM-SHA-256$4096:qnxl4/+jszWWJFPJTqcW7w==$LGRzkzgJqQiCuTI49rY89I1ay+ZT+BKjgN+n3PPoHnA=:LD8Dc8YoHUlgBnj8ecIVqjXINCAQJtCvD50KcSt0qNw=",
+        ),
+        (
+            "caf\xe9",
+            "SCRAM-SHA-256$4096:FES4FqgxKSSb71nxzGBAlQ==$6VSd5pT0eQx/lvFopWxSCfkIlav0mD9/k8kKrMc9Xzc=:WathG22LasQPkg84KEeZHSA2+1MOJ2KfgnxPVfrZX4M=",
+        ),
+        # NFKC
+        (
+            "cafe\u0301",
+            "SCRAM-SHA-256$4096:OI5nqob6yXnws/vZcpI0mg==$Yv5IUCNOJp636cVzQx1Mj4PyhwIS3jsF3c45WnYOW6I=:qFDggUpbjZbAs5tjrXP7XlvBGcpaX2Wg87DmDCzUi0Q=",
+        ),
+        # C.1.2, mapped to space
+        (
+            "no\xa0break",
+            "SCRAM-SHA-256$4096:Z4jI5MG/RrHpeBIH0LSzvQ==$3vC8kOgiz5WsHlOkx/KNGITS+6ZyrM92IaVDKAIaOyQ=:37jkylLLTNBwezwJtsuAlraE98a8Kj8bsA2/4yYMovE=",
+        ),
+        # B.1, mapped to nothing
+        (
+            "soft\xadhyphen",
+            "SCRAM-SHA-256$4096:w6BxVghbOQc3TuCqK+wmUw==$No//E///nPletkYvXw53BjG+9A277H6pKDnsZDW/P9M=:V9+4fejflX65zIAGznZlHlmPvh0L+Y2gG1GNnHuQ9Ig=",
+        ),
+        (
+            "\ufb01ligature",
+            "SCRAM-SHA-256$4096:sILeW/TVsBSKdxTht8E2Ew==$Zz8hhEVTP/FOOpP9WTlJe8hzZBj9nYDRObj+p60yNUA=:IXY2zjqU4nsoysVJPJFFDUZmPzpHHvOuOyBxb73Wa0M=",
+        ),
+        (
+            "\u2163roman",
+            "SCRAM-SHA-256$4096:WSiVg0rU9O+zz8FZH6MRhQ==$EEzwfsD0wpc/307MsHyR5khkKYqjKKVE7RCkw7ZEeo4=:W6ozbnpK0NANSATu8+GAoZTNks81GxQYkEUZQB0yg+0=",
+        ),
+        # ASCII, used unchanged
+        (
+            "ctrl\x07bell",
+            "SCRAM-SHA-256$4096:oxRIpt58JFEUcFqm+8F8hA==$uumq4rH9WPYzImNBtYLspe70hZbygOwH2bhW/QuzbdY=:QJGWx0fp0/55Z6zL9FYgkZW/AFm22W+Ow82yg3Px8+g=",
+        ),
+        (
+            "\u0627\u0644\u0639\u0631\u0628\u064a\u0629",
+            "SCRAM-SHA-256$4096:i8FMZL5y6kNO0u8Vh+RH2A==$9LVnxW3jyb5G6fBJ9ubf5AByyzNWbIqokwphT01c+7w=:vn+od+oELO8u6j+Hsi0nbULebAlB5w+jFyAFdhjUUq0=",
+        ),
+        (
+            "A" * 100,
+            "SCRAM-SHA-256$4096:78JzUaBlsEOC/Z4OXMC9Qw==$Aih7/Vs+KSC8QrC35S4m3Jbi9FkkR9HOMDmpUcBB7k4=:RsKu0I7XeR5mDkj96XzXtofx8BRaspR5Sen0pVUoPBg=",
+        ),
+        # unassigned in Unicode 3.2, so used unchanged
+        (
+            "\U0001f100x",
+            "SCRAM-SHA-256$4096:WdnEeVEFFBAxxdywtXLxYA==$z0mnr7DlOLDTE+RAd2I0Mr9HhX0Nq+8C1P5OhWcFVtQ=:d50IneGHmFNv4scc6cep9rChFNbijfSmJQsbhjH4LiI=",
+        ),
+        (
+            "\U0001f600smile",
+            "SCRAM-SHA-256$4096:J6zRYhM4Np+zZDARFIxh2A==$thuOKB6NQoxnzrVSIi5IupaKW8puWH9/WU51H9mhW6M=:VmNxoUq0ujRbR3SJEup/z3k5wDhXYR0CmQTzjroEu4c=",
+        ),
+        # nothing left after mapping, used unchanged
+        (
+            "\xad",
+            "SCRAM-SHA-256$4096:5s/j6DbQBCFzOLl+N8qyOw==$OYCgKivZIXE8aUIj9warJkM07AqhDqu5BCdKGvoWYPI=:FXMbpiDOtlY+NNVvDzbzO0PlFzOK5LzRlMDVoHr/Lho=",
+        ),
+        # U+200B is in both C.1.2 and B.1
+        (
+            "\xad\u200b",
+            "SCRAM-SHA-256$4096:MBnP+SkTEEIrLcSfjy5emg==$w25TRZEkSIN06yUTl+2kO3Er8G8jo/6bqnxh4PxG4IU=:BKyCf218Ldl1P6jZtpEzjNakuOsEr+/+7Cyw3PSIhrM=",
+        ),
+        (
+            "\ufb50\u05d0",
+            "SCRAM-SHA-256$4096:740OwSgZNaXDILp0BG47AA==$fe34YkjrRk+jzhj27J5vKQuFUIn7SBi46Fxy9s0UMdo=:J4D8gviGRP4H3N/SIaAvTdTTRG/fQe9cPPo2eQm8bOk=",
+        ),
+        # fails the bidi rules, used unchanged
+        (
+            "\u05d0a\u05d0",
+            "SCRAM-SHA-256$4096:JAWohdhpuoOf5xnjkTQZvQ==$d6DAQw1CaP3E7iOCahpQbSYOPFlJXjSMlqJDhQjdwlg=:BRqHEt8keStIj7F3QRTD0/m1873AdKepMhLKfFcSnSU=",
+        ),
+        (
+            "\u2474one",
+            "SCRAM-SHA-256$4096:PBD5AE8LrzvWOAdKNQsccg==$8LhwibFKZerC+J8F2op9GpruqhdSKfHyFOuJibWaY3I=:71Lj0ooxi48FlUV7CCudqQ8sYEaVg1WR2EUhcrVS1N4=",
+        ),
+        # NFKC maps U+2113 to "l"
+        (
+            UPASS_TABLE,
+            "SCRAM-SHA-256$4096:/9zDfOKBHi+m2L+S1aNRdA==$k8K+7Gu8Ir6tLA5XlCV6baMHnh/Iwhb7a43PlaFAYtU=:Vfic9h9zFip840fUop11TRJmWa+AbjzHFeDjlHtfINs=",
+        ),
+    ]
+    known_malformed_hashes = [
+        # zero padded rounds
+        "SCRAM-SHA-256$04096:qE12cIqZ4NbSTha3vHwnUQ==$hbulmmufyG84BS1ysOzVpkWC4vagn5R4GdHoisalWew=:PrGAnGUKJ373dqDPur5H7YRFQ0Sh9SMly6G3lnsLiLY=",
+        # bad char in salt
+        "SCRAM-SHA-256$4096:qE12cIqZ4NbSTha3vHwnU!==$hbulmmufyG84BS1ysOzVpkWC4vagn5R4GdHoisalWew=:PrGAnGUKJ373dqDPur5H7YRFQ0Sh9SMly6G3lnsLiLY=",
+        # bad base64 padding
+        "SCRAM-SHA-256$4096:qE12cIqZ4NbSTha3vHwnUQ$hbulmmufyG84BS1ysOzVpkWC4vagn5R4GdHoisalWew=:PrGAnGUKJ373dqDPur5H7YRFQ0Sh9SMly6G3lnsLiLY=",
+        # short stored key
+        "SCRAM-SHA-256$4096:qE12cIqZ4NbSTha3vHwnUQ==$hbulmmufyG84BS1ysOzVpkWC4vagn5R4GdHoisal:PrGAnGUKJ373dqDPur5H7YRFQ0Sh9SMly6G3lnsLiLY=",
+        # missing server key
+        "SCRAM-SHA-256$4096:qE12cIqZ4NbSTha3vHwnUQ==$hbulmmufyG84BS1ysOzVpkWC4vagn5R4GdHoisalWew=",
+        # too many fields
+        "SCRAM-SHA-256$4096:qE12cIqZ4NbSTha3vHwnUQ==$hbulmmufyG84BS1ysOzVpkWC4vagn5R4GdHoisalWew=:PrGAnGUKJ373dqDPur5H7YRFQ0Sh9SMly6G3lnsLiLY=:",
+    ]
+    known_unidentified_hashes = [
+        "SCRAM-SHA-1$4096:qE12cIqZ4NbSTha3vHwnUQ==$hbulmmufyG84BS1ysOzVpkWC4vag:PrGAnGUKJ373dqDPur5H7YRFQ0Sh",
+        "md55fba2ea04fd36069d2574ea71c8efe9d",
+    ]
+
+
 class _sha1_crypt_test(HandlerCase):
     handler = hash.sha1_crypt
 

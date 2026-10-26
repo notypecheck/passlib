@@ -93,7 +93,7 @@ if False:
         pbkdf2_sha512,
     )
     from passlib.handlers.phpass import phpass
-    from passlib.handlers.postgres import postgres_md5
+    from passlib.handlers.postgres import postgres_md5, postgres_scram_sha256
     from passlib.handlers.roundup import ldap_hex_md5, ldap_hex_sha1, roundup_plaintext
     from passlib.handlers.scram import scram
     from passlib.handlers.scrypt import scrypt
