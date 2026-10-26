@@ -316,6 +316,7 @@ in one of the above categories:
     passlib.hash.django_std
     passlib.hash.grub_pbkdf2_sha512
     passlib.hash.hex_digests
+    passlib.hash.junos9
     passlib.hash.plaintext
 
 .. rubric:: Footnotes

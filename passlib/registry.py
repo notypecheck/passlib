@@ -114,6 +114,7 @@ _locations = dict(
     hex_sha256="passlib.handlers.digests",
     hex_sha512="passlib.handlers.digests",
     htdigest="passlib.handlers.digests",
+    junos9="passlib.handlers.juniper",
     ldap_plaintext="passlib.handlers.ldap_digests",
     ldap_md5="passlib.handlers.ldap_digests",
     ldap_sha1="passlib.handlers.ldap_digests",

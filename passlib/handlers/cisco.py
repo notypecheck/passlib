@@ -487,6 +487,12 @@ class cisco_type9(_CiscoSaltedHash):
     name = "cisco_type9"
     ident = "$9$"
 
+    @classmethod
+    def identify(cls, hash):
+        # junos9 secrets start with "$9$" too, but have no second "$"
+        hash = uh.to_unicode_for_identify(hash)
+        return hash.startswith(cls.ident) and "$" in hash[len(cls.ident) :]
+
     @staticmethod
     def _derive(secret, salt):
         return _scrypt(secret, salt, 16384, 1, 1, 32)

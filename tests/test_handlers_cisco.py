@@ -573,4 +573,6 @@ class cisco_type9_test(HandlerCase):
         "$8$TnGX/fE4KGHOVU$pEhnEvxrvaynpi8j4f.EMHr6M.FzU8xnZnBr/tJdFWk",
         # type 5 (md5_crypt)
         "$1$ehAsHC4t$4IbK3fHS/H1YGtNYBrIEB1",
+        # junos9
+        "$9$YQ4JD.PQ9A0ikA0BIrl24a",
     ]

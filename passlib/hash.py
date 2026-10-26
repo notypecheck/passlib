@@ -65,6 +65,7 @@ if False:
         django_salted_sha1,
     )
     from passlib.handlers.fshp import fshp
+    from passlib.handlers.juniper import junos9
     from passlib.handlers.ldap_digests import (  # type: ignore[attr-defined]
         ldap_bcrypt,
         ldap_bsdi_crypt,
