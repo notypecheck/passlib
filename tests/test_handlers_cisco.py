@@ -576,3 +576,60 @@ class cisco_type9_test(HandlerCase):
         # junos9
         "$9$YQ4JD.PQ9A0ikA0BIrl24a",
     ]
+
+
+class cisco_convoluted_type9_test(HandlerCase):
+    handler = hash.cisco_convoluted_type9
+
+    known_correct_hashes = [
+        #
+        # type 5 secrets as converted by a Cisco c8000v, IOS XE 17.15.6
+        #
+        (
+            "hashcat",
+            "$14$Vomh$q.AOEopkrAtsb.$FOnpOOn276DB9WWDL4.lZ3QJ4lKpHpHhTooZlSKZ5ZU",
+        ),
+        (
+            "cisco",
+            "$14$j4RA$TyDwhsUZhvYY7k$ivYck5w6PvUL8XmYezjfnKCfN6Ow6eOgO9BIPE6txAY",
+        ),
+        (
+            "password",
+            "$14$p5Dy$ghbpp.KxZA0y4.$9lFgKdFkwpAnwt1DBSrhxabL7YUx8kt5w9CgodaSSz2",
+        ),
+        (
+            "Passw0rd!",
+            "$14$IgTC$.4GDOEuR7dnZ4E$B5bbO97gGWB66ilTQ81GIZlSuqQcj0u9sh/sfprKKIE",
+        ),
+        (
+            "correct horse battery staple",
+            "$14$469.$L7eTeDk2MmBpbk$qkfz8AwYP79NpMNeKegZKx1IdqAkv0rqom/OhnVk2eQ",
+        ),
+        ("a", "$14$tHCS$ASXa..ys58OQ3.$nCujpwmNNTFOY3qD7t0ZS4ixOP7WfRzVd/BylQ0e.4I"),
+        #
+        # custom
+        #
+        # ensures utf-8 used for unicode
+        (
+            UPASS_TABLE,
+            "$14$sNF6$sBxbTocEpmwFb/$UkVpBMdRVORUFaVNHGye6ChG.dIjex6YyQ8gafx9HCI",
+        ),
+    ]
+
+    known_malformed_hashes = [
+        # md5_crypt salt too long
+        "$14$p5Dyx$ghbpp.KxZA0y4.$9lFgKdFkwpAnwt1DBSrhxabL7YUx8kt5w9CgodaSSz2",
+        # scrypt salt too short
+        "$14$p5Dy$ghbpp.KxZA0y4$9lFgKdFkwpAnwt1DBSrhxabL7YUx8kt5w9CgodaSSz2",
+        # bad char in checksum
+        "$14$p5Dy$ghbpp.KxZA0y4.$9lFgKdFkwpAnwt1DBSrhxabL7YUx8kt5w9CgodaSSz!",
+        # missing checksum
+        "$14$p5Dy$ghbpp.KxZA0y4.",
+    ]
+
+    known_unidentified_hashes = [
+        # type 9
+        "$9$2MJBozw/9R3UsU$2lFhcKvpghcyw8deP25GOfyZaagyUOGBymkryvOdfo6",
+        # type 5 (md5_crypt)
+        "$1$ehAsHC4t$4IbK3fHS/H1YGtNYBrIEB1",
+    ]

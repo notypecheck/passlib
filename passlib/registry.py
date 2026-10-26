@@ -93,6 +93,7 @@ _locations = dict(
     cisco_type7="passlib.handlers.cisco",
     cisco_type8="passlib.handlers.cisco",
     cisco_type9="passlib.handlers.cisco",
+    cisco_convoluted_type9="passlib.handlers.cisco",
     cta_pbkdf2_sha1="passlib.handlers.pbkdf2",
     crypt16="passlib.handlers.des_crypt",
     des_crypt="passlib.handlers.des_crypt",

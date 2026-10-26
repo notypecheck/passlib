@@ -39,6 +39,7 @@ if False:
     from passlib.handlers.bcrypt import bcrypt, bcrypt_sha256
     from passlib.handlers.cisco import (
         cisco_asa,
+        cisco_convoluted_type9,
         cisco_pix,
         cisco_type7,
         cisco_type8,

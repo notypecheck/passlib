@@ -261,6 +261,7 @@ are usually referred to by a Cisco-assigned "type" code:
     passlib.hash.cisco_type7
     passlib.hash.cisco_type8
     passlib.hash.cisco_type9
+    passlib.hash.cisco_convoluted_type9
 
 * :doc:`passlib.hash.md5_crypt <passlib.hash.md5_crypt>` -- "Type 5" hashes are actually just the standard
   Unix MD5-Crypt hash, the format is identical.
@@ -273,6 +274,9 @@ are usually referred to by a Cisco-assigned "type" code:
 
 * :doc:`passlib.hash.cisco_type9 <passlib.hash.cisco_type9>` -- "Type 9" hashes
   are based on scrypt.
+
+* :doc:`passlib.hash.cisco_convoluted_type9 <passlib.hash.cisco_convoluted_type9>` --
+  "convoluted Type 9" hashes (``$14$``) are Type 9 hashes of a Type 5 hash.
 
 **Cisco PIX & ASA**
 
