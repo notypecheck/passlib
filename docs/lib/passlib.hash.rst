@@ -259,6 +259,8 @@ are usually referred to by a Cisco-assigned "type" code:
     :maxdepth: 1
 
     passlib.hash.cisco_type7
+    passlib.hash.cisco_type8
+    passlib.hash.cisco_type9
 
 * :doc:`passlib.hash.md5_crypt <passlib.hash.md5_crypt>` -- "Type 5" hashes are actually just the standard
   Unix MD5-Crypt hash, the format is identical.
@@ -266,11 +268,11 @@ are usually referred to by a Cisco-assigned "type" code:
 * :doc:`passlib.hash.cisco_type7 <passlib.hash.cisco_type7>` -- "Type 7" isn't actually a hash,
   but a reversible encoding designed to obscure passwords from idle view.
 
-* "Type 8" hashes are based on PBKDF2-HMAC-SHA256;
-  but not currently supported by passlib (:issue:`87`).
+* :doc:`passlib.hash.cisco_type8 <passlib.hash.cisco_type8>` -- "Type 8" hashes
+  are based on PBKDF2-HMAC-SHA256.
 
-* "Type 9" hashes are based on scrypt;
-  but not currently supported by passlib (:issue:`87`).
+* :doc:`passlib.hash.cisco_type9 <passlib.hash.cisco_type9>` -- "Type 9" hashes
+  are based on scrypt.
 
 **Cisco PIX & ASA**
 
