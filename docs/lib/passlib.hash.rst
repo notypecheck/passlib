@@ -259,6 +259,9 @@ are usually referred to by a Cisco-assigned "type" code:
     :maxdepth: 1
 
     passlib.hash.cisco_type7
+    passlib.hash.cisco_type8
+    passlib.hash.cisco_type9
+    passlib.hash.cisco_convoluted_type9
 
 * :doc:`passlib.hash.md5_crypt <passlib.hash.md5_crypt>` -- "Type 5" hashes are actually just the standard
   Unix MD5-Crypt hash, the format is identical.
@@ -266,11 +269,14 @@ are usually referred to by a Cisco-assigned "type" code:
 * :doc:`passlib.hash.cisco_type7 <passlib.hash.cisco_type7>` -- "Type 7" isn't actually a hash,
   but a reversible encoding designed to obscure passwords from idle view.
 
-* "Type 8" hashes are based on PBKDF2-HMAC-SHA256;
-  but not currently supported by passlib (:issue:`87`).
+* :doc:`passlib.hash.cisco_type8 <passlib.hash.cisco_type8>` -- "Type 8" hashes
+  are based on PBKDF2-HMAC-SHA256.
 
-* "Type 9" hashes are based on scrypt;
-  but not currently supported by passlib (:issue:`87`).
+* :doc:`passlib.hash.cisco_type9 <passlib.hash.cisco_type9>` -- "Type 9" hashes
+  are based on scrypt.
+
+* :doc:`passlib.hash.cisco_convoluted_type9 <passlib.hash.cisco_convoluted_type9>` --
+  "convoluted Type 9" hashes (``$14$``) are Type 9 hashes of a Type 5 hash.
 
 **Cisco PIX & ASA**
 
@@ -285,6 +291,7 @@ they occur in.  The following are known & handled by passlib:
 
     passlib.hash.cisco_pix
     passlib.hash.cisco_asa
+    passlib.hash.cisco_asa_pbkdf2
 
 * :doc:`passlib.hash.cisco_pix <passlib.hash.cisco_pix>` -- PIX "encrypted" hashes
   use a simple unsalted MD5-based algorithm.
@@ -296,9 +303,8 @@ they occur in.  The following are known & handled by passlib:
   are the same as :class:`passlib.hash.nthash`,
   except that they use base64 encoding rather than hexadecimal.
 
-* ASA 9.5 added support for "pbkdf2" hashes
-  (based on PBKDF2-HMAC-SHA512); which aren't currently supported
-  by passlib (:issue:`87`).
+* :doc:`passlib.hash.cisco_asa_pbkdf2 <passlib.hash.cisco_asa_pbkdf2>` -- ASA "pbkdf2" hashes
+  are based on PBKDF2-HMAC-SHA512.
 
 .. _other-hashes:
 
@@ -314,6 +320,7 @@ in one of the above categories:
     passlib.hash.django_std
     passlib.hash.grub_pbkdf2_sha512
     passlib.hash.hex_digests
+    passlib.hash.junos9
     passlib.hash.plaintext
 
 .. rubric:: Footnotes

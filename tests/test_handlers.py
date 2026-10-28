@@ -29,6 +29,7 @@ _handler_test_modules = [
     "test_handlers_bcrypt",
     "test_handlers_cisco",
     "test_handlers_django",
+    "test_handlers_juniper",
     "test_handlers_pbkdf2",
     "test_handlers_scrypt",
 ]

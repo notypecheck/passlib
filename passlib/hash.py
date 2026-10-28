@@ -37,7 +37,15 @@ sys.modules[__name__] = _proxy  # type: ignore[assignment]
 if False:
     from passlib.handlers.argon2 import argon2
     from passlib.handlers.bcrypt import bcrypt, bcrypt_sha256
-    from passlib.handlers.cisco import cisco_asa, cisco_pix, cisco_type7
+    from passlib.handlers.cisco import (
+        cisco_asa,
+        cisco_asa_pbkdf2,
+        cisco_convoluted_type9,
+        cisco_pix,
+        cisco_type7,
+        cisco_type8,
+        cisco_type9,
+    )
     from passlib.handlers.des_crypt import bigcrypt, bsdi_crypt, crypt16, des_crypt
     from passlib.handlers.digests import (
         hex_md4,
@@ -59,6 +67,7 @@ if False:
         django_salted_sha1,
     )
     from passlib.handlers.fshp import fshp
+    from passlib.handlers.juniper import junos9
     from passlib.handlers.ldap_digests import (  # type: ignore[attr-defined]
         ldap_bcrypt,
         ldap_bsdi_crypt,

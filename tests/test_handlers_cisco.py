@@ -5,11 +5,17 @@ from passlib import exc, hash
 from .test_handlers import UPASS_TABLE
 from .utils import HandlerCase, UserHandlerMixin, repeat_string
 
+#: IOS XE hashes only the first 127 bytes of longer type 8 and 9 passwords
+_LONG = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" * 3
+
 # module
 __all__ = [
     "cisco_pix_test",
     "cisco_asa_test",
     "cisco_type7_test",
+    "cisco_type8_test",
+    "cisco_type9_test",
+    "cisco_asa_pbkdf2_test",
 ]
 
 
@@ -451,3 +457,238 @@ class cisco_type7_test(HandlerCase):
         with pytest.warns(match="salt/offset must be.*"):
             subcls = handler.using(salt=100, relaxed=True)
         assert subcls(use_defaults=True).salt == 52
+
+
+class cisco_type8_test(HandlerCase):
+    handler = hash.cisco_type8
+
+    known_correct_hashes = [
+        #
+        # generated on a Cisco c8000v, IOS XE 17.15.6
+        #
+        (_LONG[:127], "$8$yXWJtSg4YjJdfE$u5bgtWtAGD8rN8gy6O5kwBwbhAXzz7O.SGXrTQYm5zY"),
+        (_LONG[:128], "$8$yXWJtSg4YjJdfE$u5bgtWtAGD8rN8gy6O5kwBwbhAXzz7O.SGXrTQYm5zY"),
+        (_LONG[:129], "$8$yXWJtSg4YjJdfE$u5bgtWtAGD8rN8gy6O5kwBwbhAXzz7O.SGXrTQYm5zY"),
+        ("hashcat", "$8$9szpjHbo403LKU$aW4eaAiJLAXcokkNnc6imT9cUN48bE3ULpvSpMAHL6s"),
+        ("cisco", "$8$q5QNSSXTHxL3Ck$sNSM88IVIwqusq1tAHFpI0gPTpLL3YVCchcg0nGumF6"),
+        ("password", "$8$eFee2eyLW70N3k$PISg1XZZwyBAMVDB7L/mOIF4IRO6Jq8caRa8NGLSiB."),
+        ("Passw0rd!", "$8$SVWxNB/03.eI4U$IR5nybGy9LCSvfB1p5Gu/RnK8u8CGBVpdB2e9lNIOWs"),
+        (
+            "correct horse battery staple",
+            "$8$bwqwUWhdffX1hU$wMm1xxISobq8y9ZCmO6/3vMh/.sSfilMMAOHUBVPl5.",
+        ),
+        (
+            "p@$$:w0rd#%&*()",
+            "$8$g20qzzHKTdqCS.$tHgV8.X.2JvySIHguBLFwNbREoEXtsTZ/YmuHLw3gn.",
+        ),
+        (
+            "~`^{}[]|\"'<>,.;=+-_",
+            "$8$S3NWeoOnAoGf4U$7cH00X2glWiepBW92Py0A2Hf/VfK0U7UJYukhC0Lig6",
+        ),
+        ("a", "$8$D896wrUK/vID8E$I7v2XyOIGEdYvBZv0135r/PCK6EiK6Xux47xi1uZC.6"),
+        (
+            "0123456789012345678901234",
+            "$8$QYdrEZb9qcz9z.$vfHVDH3bj.l6aslWSUSWpjPcC0MSHqxEH2NJCKjiL66",
+        ),
+        ("A" * 64, "$8$gFmxpieHOeQmoU$xKUl2tAbb8vvvshBsnUkMsg36aDsj3LDra8wufPrtA2"),
+        #
+        # hashcat example hash
+        #
+        ("hashcat", "$8$TnGX/fE4KGHOVU$pEhnEvxrvaynpi8j4f.EMHr6M.FzU8xnZnBr/tJdFWk"),
+        #
+        # custom
+        #
+        # ensures utf-8 used for unicode
+        (UPASS_TABLE, "$8$UXSHqUcaJOOYc2$i9phHWeYtwpHyTA5h8S9Pl8oMI3l.4YMtmcaCDVFY6Q"),
+    ]
+
+    known_malformed_hashes = [
+        # salt too short
+        "$8$TnGX/fE4KGHOV$pEhnEvxrvaynpi8j4f.EMHr6M.FzU8xnZnBr/tJdFWk",
+        # bad char in checksum
+        "$8$TnGX/fE4KGHOVU$pEhnEvxrvaynpi8j4f.EMHr6M.FzU8xnZnBr/tJdFW!",
+        # checksum too long
+        "$8$TnGX/fE4KGHOVU$pEhnEvxrvaynpi8j4f.EMHr6M.FzU8xnZnBr/tJdFWkk",
+    ]
+
+    known_unidentified_hashes = [
+        # type 9
+        "$9$2MJBozw/9R3UsU$2lFhcKvpghcyw8deP25GOfyZaagyUOGBymkryvOdfo6",
+        # type 5 (md5_crypt)
+        "$1$ehAsHC4t$4IbK3fHS/H1YGtNYBrIEB1",
+    ]
+
+
+class cisco_type9_test(HandlerCase):
+    handler = hash.cisco_type9
+
+    known_correct_hashes = [
+        #
+        # generated on a Cisco c8000v, IOS XE 17.15.6
+        #
+        (_LONG[:127], "$9$rXEcbXIqZ7ATd.$MXEKv.Xn7l6UAHmfZDz/avYKEDGDw809QjTdRC4PrX2"),
+        (_LONG[:128], "$9$rXEcbXIqZ7ATd.$MXEKv.Xn7l6UAHmfZDz/avYKEDGDw809QjTdRC4PrX2"),
+        (_LONG[:129], "$9$rXEcbXIqZ7ATd.$MXEKv.Xn7l6UAHmfZDz/avYKEDGDw809QjTdRC4PrX2"),
+        ("hashcat", "$9$nyms5/IdSo/oqU$dnIT2/tC8wqO4ce7FsV6L.2Agf2pM5ZBT95dvVsYNFA"),
+        ("cisco", "$9$KXeta3EyjTCelk$cvfFUim61L5WsvHPljywa3tE8IK8ZpaLE.KQ3Yun1c."),
+        ("password", "$9$VD6t657EnTvGUU$l0jRVy/mcJIYXSSHlraehUwWYpurISu5BAuZhi6CdFY"),
+        ("Passw0rd!", "$9$KDhEn8ygVgQ/DU$HzrQzjlcN4ygU3LkQfmxjHkXtuVnrjciT8gY.u9/KP."),
+        (
+            "correct horse battery staple",
+            "$9$hzpFH11AFtmYwU$U8oVDyK0zDSSv5QbiqEJIz6NYqoKEyb5rn3MFpDbgFk",
+        ),
+        (
+            "p@$$:w0rd#%&*()",
+            "$9$YqkaxprVNiySiU$7xM9F/gj4d../R/v.R8hZxh8oZqxypiMJvPwuaulvI2",
+        ),
+        (
+            "~`^{}[]|\"'<>,.;=+-_",
+            "$9$6qx2wUjpa9KYV.$edQfhM2knUco.8dUXRekZfMrKRMYrdselvdQgsKH4jM",
+        ),
+        ("a", "$9$XkPXdDLigtPDkE$boNNhHX34LDDHnwQqru8dDctMb8BZK2nCvCPUtlnSsU"),
+        (
+            "0123456789012345678901234",
+            "$9$6uRGqeUikZrgAU$XRwSWJdamr42bwVRDXP78YEuZLi2b/xXSRDuuY81jls",
+        ),
+        ("A" * 64, "$9$2TiRLfGe552TjU$e8K8Rf8pp2maxSkH3zdRJorgQQt5G4Y.n1l/MTBYNt2"),
+        #
+        # hashcat example hash
+        #
+        ("hashcat", "$9$2MJBozw/9R3UsU$2lFhcKvpghcyw8deP25GOfyZaagyUOGBymkryvOdfo6"),
+        #
+        # custom
+        #
+        # ensures utf-8 used for unicode
+        (UPASS_TABLE, "$9$UXSHqUcaJOOYc2$CeqRO02NqYBlZW/QAf7DLBkFgGBUKnzLsWxkMiafwj2"),
+    ]
+
+    known_malformed_hashes = [
+        # salt too long
+        "$9$2MJBozw/9R3UsUU$2lFhcKvpghcyw8deP25GOfyZaagyUOGBymkryvOdfo6",
+        # bad char in salt
+        "$9$2MJBozw/9R3Us!$2lFhcKvpghcyw8deP25GOfyZaagyUOGBymkryvOdfo6",
+    ]
+
+    known_unidentified_hashes = [
+        # type 8
+        "$8$TnGX/fE4KGHOVU$pEhnEvxrvaynpi8j4f.EMHr6M.FzU8xnZnBr/tJdFWk",
+        # type 5 (md5_crypt)
+        "$1$ehAsHC4t$4IbK3fHS/H1YGtNYBrIEB1",
+        # junos9
+        "$9$YQ4JD.PQ9A0ikA0BIrl24a",
+    ]
+
+
+class cisco_convoluted_type9_test(HandlerCase):
+    handler = hash.cisco_convoluted_type9
+
+    known_correct_hashes = [
+        #
+        # type 5 secrets as converted by a Cisco c8000v, IOS XE 17.15.6
+        #
+        (
+            "hashcat",
+            "$14$Vomh$q.AOEopkrAtsb.$FOnpOOn276DB9WWDL4.lZ3QJ4lKpHpHhTooZlSKZ5ZU",
+        ),
+        (
+            "cisco",
+            "$14$j4RA$TyDwhsUZhvYY7k$ivYck5w6PvUL8XmYezjfnKCfN6Ow6eOgO9BIPE6txAY",
+        ),
+        (
+            "password",
+            "$14$p5Dy$ghbpp.KxZA0y4.$9lFgKdFkwpAnwt1DBSrhxabL7YUx8kt5w9CgodaSSz2",
+        ),
+        (
+            "Passw0rd!",
+            "$14$IgTC$.4GDOEuR7dnZ4E$B5bbO97gGWB66ilTQ81GIZlSuqQcj0u9sh/sfprKKIE",
+        ),
+        (
+            "correct horse battery staple",
+            "$14$469.$L7eTeDk2MmBpbk$qkfz8AwYP79NpMNeKegZKx1IdqAkv0rqom/OhnVk2eQ",
+        ),
+        ("a", "$14$tHCS$ASXa..ys58OQ3.$nCujpwmNNTFOY3qD7t0ZS4ixOP7WfRzVd/BylQ0e.4I"),
+        #
+        # custom
+        #
+        # ensures utf-8 used for unicode
+        (
+            UPASS_TABLE,
+            "$14$sNF6$sBxbTocEpmwFb/$UkVpBMdRVORUFaVNHGye6ChG.dIjex6YyQ8gafx9HCI",
+        ),
+    ]
+
+    known_malformed_hashes = [
+        # md5_crypt salt too long
+        "$14$p5Dyx$ghbpp.KxZA0y4.$9lFgKdFkwpAnwt1DBSrhxabL7YUx8kt5w9CgodaSSz2",
+        # scrypt salt too short
+        "$14$p5Dy$ghbpp.KxZA0y4$9lFgKdFkwpAnwt1DBSrhxabL7YUx8kt5w9CgodaSSz2",
+        # bad char in checksum
+        "$14$p5Dy$ghbpp.KxZA0y4.$9lFgKdFkwpAnwt1DBSrhxabL7YUx8kt5w9CgodaSSz!",
+        # missing checksum
+        "$14$p5Dy$ghbpp.KxZA0y4.",
+    ]
+
+    known_unidentified_hashes = [
+        # type 9
+        "$9$2MJBozw/9R3UsU$2lFhcKvpghcyw8deP25GOfyZaagyUOGBymkryvOdfo6",
+        # type 5 (md5_crypt)
+        "$1$ehAsHC4t$4IbK3fHS/H1YGtNYBrIEB1",
+    ]
+
+
+class cisco_asa_pbkdf2_test(HandlerCase):
+    handler = hash.cisco_asa_pbkdf2
+
+    known_correct_hashes = [
+        #
+        # generated on a Cisco ASAv, 9.24(10), which refuses passwords
+        # shorter than 8 or longer than 127 characters
+        #
+        ("password", "$sha512$5000$Lxc+b6IuH4tWhgTSgWua2w==$d7ZG9X0Ph2Jsvc176SmLHA=="),
+        ("Passw0rd!", "$sha512$5000$FRfqAmoEf3AGpyvrn/ibIg==$Tt70Arp/0VkJYB+33tEaug=="),
+        (
+            "p@$$:w0rd#%&*()",
+            "$sha512$5000$oOYybDF/s97AX2h9U2tB/A==$ytiiFeR/r0qyn6B2BpCFkg==",
+        ),
+        (
+            "~`^{}[]|\"'<>,.;=+-_",
+            "$sha512$5000$YkRllhnWXOJShM5BDJpnPA==$H4vkxaugxFc5t/dn3V8fKA==",
+        ),
+        (
+            "bWsZ5HHAOMHyqzY0Bce7oQGpxvyFqNzZoFHCWfwF6a8Mz7djIwiWtnwuFORGSeEqPTDaCtsa0PxH3xcODVvye2P02gYJYQCgEkB0AH1dOXiZZD5mYkkRQ3wDkaKeTpV",
+            "$sha512$5000$JfBr/J+OW7MXvLmR1jCYMg==$sQBllWjpZURIUmsUF/ByCg==",
+        ),
+        (
+            "ZByVGudJlNajhjkMtcBGHisfFqUa61WtE",
+            "$sha512$5000$j7Rrd9m1X3YV/MqIa9y63Q==$5JeFU7LSPtQcxSuHK4ASpQ==",
+        ),
+        (
+            "FbuXD2tD7LXy8WH8OrUKccdEVLUjHz7FrnzLCFFcTtayQrqLuJ6KxoQ2Wax7QsfF",
+            "$sha512$5000$6g4Evla7xeomdnRsDS1Caw==$V+cCLcjh/P8hTcbY4NW+2g==",
+        ),
+        #
+        # custom
+        #
+        # ensures utf-8 used for unicode
+        (UPASS_TABLE, "$sha512$5000$cK5VCuH831vLmXOu9X6PEQ==$SRHUamIA31onGwBqFMn8ig=="),
+    ]
+
+    known_malformed_hashes = [
+        # salt too short
+        "$sha512$5000$Lxc+b6IuH4tWhgTSgWua$d7ZG9X0Ph2Jsvc176SmLHA==",
+        # bad char in checksum
+        "$sha512$5000$Lxc+b6IuH4tWhgTSgWua2w==$d7ZG9X0Ph2Jsvc176SmLH!==",
+        # checksum too long
+        "$sha512$5000$Lxc+b6IuH4tWhgTSgWua2w==$d7ZG9X0Ph2Jsvc176SmLHAAAAA",
+        # checksum missing padding
+        "$sha512$5000$Lxc+b6IuH4tWhgTSgWua2w==$d7ZG9X0Ph2Jsvc176SmLHA",
+        # zero-padded rounds
+        "$sha512$05000$Lxc+b6IuH4tWhgTSgWua2w==$d7ZG9X0Ph2Jsvc176SmLHA==",
+    ]
+
+    known_unidentified_hashes = [
+        # sha512_crypt
+        "$6$rounds=656000$Cd/Z3PPyKEdS.0.H$TYP/sNHL7/WTQdSQw57NJOupMpj/4Lv/SwCYyceT9i7gPqGpXACefnyO.QhendpRLSdIbFFeRO7fq1Rm0iiai.",
+        # pbkdf2_sha512
+        "$pbkdf2-sha512$25000$7h0j5FxLKcW4V.o95/zfuw$dy.fjpUO2AI4rOHnMoPn1iEruNI0.3onIWzc8ta1.FzTF6w7pJAt8tK5AfJafXdxMKZG9WGtyoIiRk1voSm1FA",
+    ]
