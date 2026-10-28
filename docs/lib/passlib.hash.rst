@@ -291,6 +291,7 @@ they occur in.  The following are known & handled by passlib:
 
     passlib.hash.cisco_pix
     passlib.hash.cisco_asa
+    passlib.hash.cisco_asa_pbkdf2
 
 * :doc:`passlib.hash.cisco_pix <passlib.hash.cisco_pix>` -- PIX "encrypted" hashes
   use a simple unsalted MD5-based algorithm.
@@ -302,9 +303,8 @@ they occur in.  The following are known & handled by passlib:
   are the same as :class:`passlib.hash.nthash`,
   except that they use base64 encoding rather than hexadecimal.
 
-* ASA 9.5 added support for "pbkdf2" hashes
-  (based on PBKDF2-HMAC-SHA512); which aren't currently supported
-  by passlib (:issue:`87`).
+* :doc:`passlib.hash.cisco_asa_pbkdf2 <passlib.hash.cisco_asa_pbkdf2>` -- ASA "pbkdf2" hashes
+  are based on PBKDF2-HMAC-SHA512.
 
 .. _other-hashes:
 

@@ -15,6 +15,7 @@ __all__ = [
     "cisco_type7_test",
     "cisco_type8_test",
     "cisco_type9_test",
+    "cisco_asa_pbkdf2_test",
 ]
 
 
@@ -632,4 +633,62 @@ class cisco_convoluted_type9_test(HandlerCase):
         "$9$2MJBozw/9R3UsU$2lFhcKvpghcyw8deP25GOfyZaagyUOGBymkryvOdfo6",
         # type 5 (md5_crypt)
         "$1$ehAsHC4t$4IbK3fHS/H1YGtNYBrIEB1",
+    ]
+
+
+class cisco_asa_pbkdf2_test(HandlerCase):
+    handler = hash.cisco_asa_pbkdf2
+
+    known_correct_hashes = [
+        #
+        # generated on a Cisco ASAv, 9.24(10), which refuses passwords
+        # shorter than 8 or longer than 127 characters
+        #
+        ("password", "$sha512$5000$Lxc+b6IuH4tWhgTSgWua2w==$d7ZG9X0Ph2Jsvc176SmLHA=="),
+        ("Passw0rd!", "$sha512$5000$FRfqAmoEf3AGpyvrn/ibIg==$Tt70Arp/0VkJYB+33tEaug=="),
+        (
+            "p@$$:w0rd#%&*()",
+            "$sha512$5000$oOYybDF/s97AX2h9U2tB/A==$ytiiFeR/r0qyn6B2BpCFkg==",
+        ),
+        (
+            "~`^{}[]|\"'<>,.;=+-_",
+            "$sha512$5000$YkRllhnWXOJShM5BDJpnPA==$H4vkxaugxFc5t/dn3V8fKA==",
+        ),
+        (
+            "bWsZ5HHAOMHyqzY0Bce7oQGpxvyFqNzZoFHCWfwF6a8Mz7djIwiWtnwuFORGSeEqPTDaCtsa0PxH3xcODVvye2P02gYJYQCgEkB0AH1dOXiZZD5mYkkRQ3wDkaKeTpV",
+            "$sha512$5000$JfBr/J+OW7MXvLmR1jCYMg==$sQBllWjpZURIUmsUF/ByCg==",
+        ),
+        (
+            "ZByVGudJlNajhjkMtcBGHisfFqUa61WtE",
+            "$sha512$5000$j7Rrd9m1X3YV/MqIa9y63Q==$5JeFU7LSPtQcxSuHK4ASpQ==",
+        ),
+        (
+            "FbuXD2tD7LXy8WH8OrUKccdEVLUjHz7FrnzLCFFcTtayQrqLuJ6KxoQ2Wax7QsfF",
+            "$sha512$5000$6g4Evla7xeomdnRsDS1Caw==$V+cCLcjh/P8hTcbY4NW+2g==",
+        ),
+        #
+        # custom
+        #
+        # ensures utf-8 used for unicode
+        (UPASS_TABLE, "$sha512$5000$cK5VCuH831vLmXOu9X6PEQ==$SRHUamIA31onGwBqFMn8ig=="),
+    ]
+
+    known_malformed_hashes = [
+        # salt too short
+        "$sha512$5000$Lxc+b6IuH4tWhgTSgWua$d7ZG9X0Ph2Jsvc176SmLHA==",
+        # bad char in checksum
+        "$sha512$5000$Lxc+b6IuH4tWhgTSgWua2w==$d7ZG9X0Ph2Jsvc176SmLH!==",
+        # checksum too long
+        "$sha512$5000$Lxc+b6IuH4tWhgTSgWua2w==$d7ZG9X0Ph2Jsvc176SmLHAAAAA",
+        # checksum missing padding
+        "$sha512$5000$Lxc+b6IuH4tWhgTSgWua2w==$d7ZG9X0Ph2Jsvc176SmLHA",
+        # zero-padded rounds
+        "$sha512$05000$Lxc+b6IuH4tWhgTSgWua2w==$d7ZG9X0Ph2Jsvc176SmLHA==",
+    ]
+
+    known_unidentified_hashes = [
+        # sha512_crypt
+        "$6$rounds=656000$Cd/Z3PPyKEdS.0.H$TYP/sNHL7/WTQdSQw57NJOupMpj/4Lv/SwCYyceT9i7gPqGpXACefnyO.QhendpRLSdIbFFeRO7fq1Rm0iiai.",
+        # pbkdf2_sha512
+        "$pbkdf2-sha512$25000$7h0j5FxLKcW4V.o95/zfuw$dy.fjpUO2AI4rOHnMoPn1iEruNI0.3onIWzc8ta1.FzTF6w7pJAt8tK5AfJafXdxMKZG9WGtyoIiRk1voSm1FA",
     ]
