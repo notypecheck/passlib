@@ -195,8 +195,7 @@ class AppWallet:
         This value corresponds to log2() of the number of PBKDF2
         rounds used.
 
-    .. warning::
-
+    !!! warning
         The application secret(s) should be stored in a secure location by
         your application, and each secret should contain a large amount
         of entropy (to prevent brute-force attacks if the encrypted keys
@@ -220,10 +219,6 @@ class AppWallet:
     class in order to encrypt & decrypt keys using the provided application
     secrets.  They will generally not be publically useful, and may have their
     API changed periodically.
-
-    .. automethod:: get_secret
-    .. automethod:: encrypt_key
-    .. automethod:: decrypt_key
     """
 
     #: default salt size for encrypt_key() output

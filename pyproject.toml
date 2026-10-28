@@ -9,7 +9,7 @@ maintainers = [
     { name = "Doctor", email = "notypecheck@gmail.com" },
 ]
 dependencies = []
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 readme = "README.md"
 license = { text = "BSD" }
 keywords = [
@@ -71,12 +71,12 @@ totp = [
 dev = [
     "ipython>=8.18.1",
     "tox>=4.30.3",
-    "tox-uv>=1.28.1",
+    "tox-uv>=1.37.0",
 ]
 lint = [
     "deptry>=0.23.0",
     "mypy>=1.15.0",
-    "ruff>=0.11.9",
+    "ruff>=0.17.3",
 ]
 test = [
     "coverage>=7.6.12",
@@ -89,9 +89,11 @@ test = [
     "typeguard>=4.4.2",
 ]
 docs = [
-    "cloud-sptheme>=1.10.1.post20200504175005",
-    "sphinx>=7.4.7",
-    "sphinxcontrib-fulltoc>=1.2.0",
+    "griffe-typingdoc>=0.3.2",
+    "mkdocs-material>=9.5",
+    "mkdocs-materialx>=10.2.2",
+    "mkdocstrings[python]>=0.26",
+    "properdocs>=1.6.7",
 ]
 
 [build-system]
@@ -106,7 +108,7 @@ packages = [
 [tool.uv]
 package = true
 default-groups = "all"
-
+exclude-dependencies = ["mkdocs"]
 
 [tool.uv.workspace]
 members = ["test"]
@@ -137,6 +139,7 @@ known_first_party = ["passlib"]
 
 [tool.deptry.per_rule_ignores]
 DEP001 = [
+    "cloud_sptheme",
     "argon2pure",
     "fastpbkdf2",
     "scrypt",
@@ -144,7 +147,6 @@ DEP001 = [
 ]
 DEP004 = [
     "django",
-    "cloud_sptheme",
 ]
 
 
@@ -186,14 +188,15 @@ ignore = [
     "UP031",
     "PLW2901",
     "PLC0415", # `import` should be at the top-level of a file
+    "CPY", # flake8-copyright
 ]
 
 [tool.ruff.lint.per-file-ignores]
 "passlib/hash.py" = ["F401"]
 "passlib/crypto/_blowfish/base.py" = ["E741"]
 "passlib/crypto/_blowfish/unrolled.py" = ["E741"]
-"passlib/*" = ["T"]
 "docs/conf.py" = ["INP001"]
+"passlib/*" = ["T"]
 
 [tool.commitizen]
 name = "cz_conventional_commits"
