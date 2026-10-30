@@ -1,9 +1,12 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable, Protocol
+from collections.abc import Callable
+from typing import TYPE_CHECKING, Protocol
 
 if TYPE_CHECKING:
-    from typing_extensions import Buffer, Self
+    from typing import Self
+
+    from typing_extensions import Buffer
 
 
 class HashLike(Protocol):

@@ -6,15 +6,14 @@ from __future__ import annotations
 import os
 from io import BytesIO
 from os import PathLike
-from typing import TYPE_CHECKING, Any, Generic, Literal, TypeVar, Union, cast
+from typing import TYPE_CHECKING, Any, Generic, Literal, TypeVar, cast
 from warnings import warn
 
 from passlib._logging import logger
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Iterator
-
-    from typing_extensions import Self
+    from typing import Self
 
 from passlib import exc, registry
 from passlib.context import CryptContext
@@ -43,10 +42,9 @@ _RECORD: Literal["record"] = "record"
 _TRecordKey = TypeVar("_TRecordKey")
 
 if TYPE_CHECKING:
-    _SourceTypes = Union[
-        tuple[Literal["skipped"], bytes],
-        tuple[Literal["record"], _TRecordKey],
-    ]
+    _SourceTypes = (
+        tuple[Literal["skipped"], bytes] | tuple[Literal["record"], _TRecordKey]
+    )
 else:
     _SourceTypes = None
 

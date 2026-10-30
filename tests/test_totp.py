@@ -2,7 +2,6 @@ import datetime
 import sys
 import time as _time
 from binascii import Error as DecodeError
-from datetime import timezone
 from functools import partial
 
 import pytest
@@ -44,7 +43,7 @@ def _get_max_time_t():
         next_value = value << 1
         try:
             next_year = datetime.datetime.fromtimestamp(
-                next_value - 1, tz=timezone.utc
+                next_value - 1, tz=datetime.UTC
             ).year
         except (ValueError, OSError, OverflowError):
             # utcfromtimestamp() may throw any of the following:
@@ -790,7 +789,7 @@ class TotpTest(TestCase):
 
             assert otp.normalize_time(tint) == tint
 
-            dt = datetime.datetime.fromtimestamp(time, timezone.utc)
+            dt = datetime.datetime.fromtimestamp(time, datetime.UTC)
             assert otp.normalize_time(dt) == tint
 
             orig = TotpFactory.now
@@ -889,7 +888,7 @@ class TotpTest(TestCase):
         assert otp.generate(start_time + 30).token != token
 
         # verify round-trip conversion of datetime
-        dt = datetime.datetime.fromtimestamp(time, timezone.utc)
+        dt = datetime.datetime.fromtimestamp(time, datetime.UTC)
         assert int(otp.normalize_time(dt)) == int(time)
 
         # handle datetime object
@@ -1047,7 +1046,7 @@ class TotpTest(TestCase):
         # -------------------------------
 
         # handle datetimes
-        dt = datetime.datetime.fromtimestamp(time, timezone.utc)
+        dt = datetime.datetime.fromtimestamp(time, datetime.UTC)
         assertMatches(0, token, dt, window=0)
 
         # reject invalid time

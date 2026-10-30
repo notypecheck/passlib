@@ -2,9 +2,9 @@
 
 import logging
 import sys
+from collections.abc import Callable
 from contextlib import nullcontext
 from types import ModuleType
-from typing import Callable
 
 
 def add_doc(obj: object, doc: str) -> None:

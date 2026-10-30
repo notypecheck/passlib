@@ -6,7 +6,7 @@ authors = [
     { name = "Eli Collins", email = "elic@assurancetechnologies.com" },
 ]
 maintainers = [
-    { name = "Doctor", email = "notypecheck@gmail.com" },
+    { name = "Noel", email = "notypecheck@gmail.com" },
 ]
 dependencies = []
 requires-python = ">=3.11"
@@ -39,11 +39,11 @@ classifiers = [
     "Natural Language :: English",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
     "Programming Language :: Python :: Implementation :: CPython",
     "Topic :: Security :: Cryptography",
     "Topic :: Software Development :: Libraries",
@@ -69,28 +69,26 @@ totp = [
 
 [dependency-groups]
 dev = [
-    "ipython>=8.18.1",
-    "tox>=4.30.3",
-    "tox-uv>=1.37.0",
+    "tox>=4.67.4",
+    "tox-uv>=1.37.2",
 ]
 lint = [
-    "deptry>=0.23.0",
-    "mypy>=1.15.0",
+    "deptry>=0.25.1",
+    "mypy>=2.4.1",
     "ruff>=0.17.3",
 ]
 test = [
-    "coverage>=7.6.12",
-    "django>=4.2.21",
-    "django-stubs>=5.1.3",
-    "pytest>=8.3.4",
-    "pytest-archon>=0.0.6",
-    "pytest-cov>=6.1.1",
-    "pytest-xdist>=3.6.1",
-    "typeguard>=4.4.2",
+    "coverage>=7.17.0",
+    "django>=5.0.0",
+    "django-stubs>=5.0.0",
+    "pytest>=9.2.0",
+    "pytest-archon>=0.0.7",
+    "pytest-cov>=7.1.0",
+    "pytest-xdist>=3.8.0",
+    "typeguard>=4.6.0",
 ]
 docs = [
     "griffe-typingdoc>=0.3.2",
-    "mkdocs-material>=9.5",
     "mkdocs-materialx>=10.2.2",
     "mkdocstrings[python]>=0.26",
     "properdocs>=1.6.7",
@@ -150,7 +148,7 @@ DEP004 = [
 
 
 [tool.ruff]
-target-version = "py39"
+target-version = "py311"
 
 [tool.ruff.lint]
 select = ["ALL"]
@@ -214,7 +212,7 @@ addopts = "-W error::Warning"
 
 
 [tool.mypy]
-python_version = "3.9"
+python_version = "3.11"
 
 follow_imports = "normal"
 ignore_missing_imports = false
