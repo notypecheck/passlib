@@ -1,7 +1,8 @@
 # Passlib
 
-[![image](https://img.shields.io/pypi/v/libpass.svg)](https://pypi.org/pypi/libpass)
-[![image](https://img.shields.io/pypi/pyversions/libpass.svg)](https://pypi.org/project/libpass)
+![PyPI Version](https://img.shields.io/pypi/v/passlib?style=for-the-badge)
+![PyPI Python Version](https://img.shields.io/pypi/pyversions/passlib?style=for-the-badge)
+
 
 This is a fork of https://foss.heptapod.net/python-libs/passlib
 
@@ -11,17 +12,17 @@ as a framework for managing existing password hashes. It's designed to be useful
 for a wide range of tasks, from verifying a hash found in /etc/shadow, to
 providing full-strength password hashing for multi-user application.
 
-- See the [documentation](https://passlib.readthedocs.io)
+- See the [documentation](https://notypecheck.github.io/passlib/)
   for details, installation instructions, and examples.
 - See the [changelog](https://github.com/notypecheck/passlib/blob/main/CHANGELOG.md)
   for a description of what's new in Passlib.
-- Visit [PyPI](https://pypi.org/project/libpass) for the latest stable release.
+- Visit [PyPI](https://pypi.org/project/passlib) for the latest stable release.
 
 
 
 ## Installation
 ```shell
-pip install libpass
+pip install passlib
 ```
 
 ## Usage
