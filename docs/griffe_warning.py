@@ -1,4 +1,4 @@
-import logging
+import logging  # noqa: INP001
 
 from properdocs.config.defaults import ProperDocsConfig
 

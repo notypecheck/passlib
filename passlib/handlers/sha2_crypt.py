@@ -553,8 +553,10 @@ class sha512_crypt(_SHA2_Common):
     default_rounds = 656000
     _test_hash = (
         "test",
-        "$6$rounds=1000$test$2M/Lx6Mtobqj"
-        "Ljobw0Wmo4Q5OFx5nVLJvmgseatA6oMn"
-        "yWeBdRDx4DU.1H3eGmse6pgsOgDisWBG"
-        "I5c7TZauS0",
+        (
+            "$6$rounds=1000$test$2M/Lx6Mtobqj"
+            "Ljobw0Wmo4Q5OFx5nVLJvmgseatA6oMn"
+            "yWeBdRDx4DU.1H3eGmse6pgsOgDisWBG"
+            "I5c7TZauS0"
+        ),
     )

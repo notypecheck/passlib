@@ -669,26 +669,34 @@ class argon2_argon2_cffi_test(_base_argon2_test.create_backend_case("argon2_cffi
         # v1.2, type I, w/o a version tag
         (
             "password",
-            "$argon2i$m=65536,t=2,p=4$c29tZXNhbHQAAAAAAAAAAA$"
-            "QWLzI4TY9HkL2ZTLc8g6SinwdhZewYrzz9zxCo0bkGY",
+            (
+                "$argon2i$m=65536,t=2,p=4$c29tZXNhbHQAAAAAAAAAAA$"
+                "QWLzI4TY9HkL2ZTLc8g6SinwdhZewYrzz9zxCo0bkGY"
+            ),
         ),
         # v1.3, type I
         (
             "password",
-            "$argon2i$v=19$m=65536,t=2,p=4$c29tZXNhbHQ$"
-            "IMit9qkFULCMA/ViizL57cnTLOa5DiVM9eMwpAvPwr4",
+            (
+                "$argon2i$v=19$m=65536,t=2,p=4$c29tZXNhbHQ$"
+                "IMit9qkFULCMA/ViizL57cnTLOa5DiVM9eMwpAvPwr4"
+            ),
         ),
         # v1.3, type D
         (
             "password",
-            "$argon2d$v=19$m=65536,t=2,p=4$c29tZXNhbHQ$"
-            "cZn5d+rFh+ZfuRhm2iGUGgcrW5YLeM6q7L3vBsdmFA0",
+            (
+                "$argon2d$v=19$m=65536,t=2,p=4$c29tZXNhbHQ$"
+                "cZn5d+rFh+ZfuRhm2iGUGgcrW5YLeM6q7L3vBsdmFA0"
+            ),
         ),
         # v1.3, type ID
         (
             "password",
-            "$argon2id$v=19$m=65536,t=2,p=4$c29tZXNhbHQ$"
-            "GpZ3sK/oH9p7VIiV56G/64Zo/8GaUw434IimaPqxwCo",
+            (
+                "$argon2id$v=19$m=65536,t=2,p=4$c29tZXNhbHQ$"
+                "GpZ3sK/oH9p7VIiV56G/64Zo/8GaUw434IimaPqxwCo"
+            ),
         ),
         #
         # custom
@@ -696,8 +704,10 @@ class argon2_argon2_cffi_test(_base_argon2_test.create_backend_case("argon2_cffi
         # ensure trailing null bytes handled correctly
         (
             "password\x00",
-            "$argon2i$v=19$m=65536,t=2,p=4$c29tZXNhbHQ$"
-            "Vpzuc0v0SrP88LcVvmg+z5RoOYpMDKH/lt6O+CZabIQ",
+            (
+                "$argon2i$v=19$m=65536,t=2,p=4$c29tZXNhbHQ$"
+                "Vpzuc0v0SrP88LcVvmg+z5RoOYpMDKH/lt6O+CZabIQ"
+            ),
         ),
     ]
 

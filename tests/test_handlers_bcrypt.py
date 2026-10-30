@@ -132,7 +132,7 @@ class _bcrypt_test(HandlerCase):
 
     class FuzzHashGenerator(HandlerCase.FuzzHashGenerator):
         def generate(self):
-            opts = super(_bcrypt_test.FuzzHashGenerator, self).generate()
+            opts = super(_bcrypt_test.FuzzHashGenerator, self).generate()  # noqa: UP008
 
             secret = opts["secret"]
             other = opts["other"]
@@ -305,8 +305,10 @@ def handler() -> type[GenericHandler]:
         ("U*U*U", "$2a$05$XXXXXXXXXXXXXXXXXXXXXOAcXxm9kjPGEMsLznoKqmqw7tc8WCx4a"),
         ("", "$2a$05$CCCCCCCCCCCCCCCCCCCCC.7uG0VCzI2bS7j6ymqJi9CdcdxiRTWNy"),
         (
-            "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-            "0123456789chars after 72 are ignored",
+            (
+                "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                "0123456789chars after 72 are ignored"
+            ),
             "$2a$05$abcdefghijklmnopqrstuu5s2v8.iXieOjg/.AySBTTZIIVFJeBui",
         ),
         (b"\xa3", "$2a$05$/OK.fbVrR/bpIqNJ5ianF.Sa7shbm4.OzKpvFnX1pQLmQW96oUlCq"),

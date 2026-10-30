@@ -4,6 +4,8 @@ site_description: "A comprehensive password hashing framework for Python"
 repo_url: https://github.com/notypecheck/passlib
 edit_uri: blob/main/docs/
 strict: true
+exclude_docs: |
+  *.py
 
 hooks:
   - docs/griffe_warning.py

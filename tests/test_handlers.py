@@ -121,9 +121,11 @@ class bigcrypt_test(HandlerCase):
 
     known_unidentified_hashes = [
         # one char short (10 % 11)
-        "qiyh4XPJGsOZ2MEAyLkfWqe"
-        # one char too many (1 % 11)
-        "f8.SVpL2fvwjkAnxn8/rgTkwvrif6bjYB5cd"
+        (
+            "qiyh4XPJGsOZ2MEAyLkfWqe"
+            # one char too many (1 % 11)
+            "f8.SVpL2fvwjkAnxn8/rgTkwvrif6bjYB5cd"
+        )
     ]
 
     # omit des_crypt from known_other since it's a valid bigcrypt hash too.
@@ -308,10 +310,12 @@ class fshp_test(HandlerCase):
         ),
         (
             "ExecuteOrder66",
-            "{FSHP3|16|8192}0aY7rZQ+/PR+Rd5/I9ss"
-            "RM7cjguyT8ibypNaSp/U1uziNO3BVlg5qPU"
-            "ng+zHUDQC3ao/JbzOnIBUtAeWHEy7a2vZeZ"
-            "7jAwyJJa2EqOsq4Io=",
+            (
+                "{FSHP3|16|8192}0aY7rZQ+/PR+Rd5/I9ss"
+                "RM7cjguyT8ibypNaSp/U1uziNO3BVlg5qPU"
+                "ng+zHUDQC3ao/JbzOnIBUtAeWHEy7a2vZeZ"
+                "7jAwyJJa2EqOsq4Io="
+            ),
         ),
         #
         # custom
@@ -319,8 +323,10 @@ class fshp_test(HandlerCase):
         # ensures utf-8 used for unicode
         (
             UPASS_TABLE,
-            "{FSHP1|16|16384}9v6/l3Lu/d9by5nznpOS"
-            "cqQo8eKu/b/CKli3RCkgYg4nRTgZu5y659YV8cCZ68UL",
+            (
+                "{FSHP1|16|16384}9v6/l3Lu/d9by5nznpOS"
+                "cqQo8eKu/b/CKli3RCkgYg4nRTgZu5y659YV8cCZ68UL"
+            ),
         ),
     ]
 
@@ -449,15 +455,19 @@ class hex_sha512_test(HandlerCase):
     known_correct_hashes = [
         (
             "password",
-            "b109f3bbbc244eb82441917ed06d618b9008dd09b3befd1b5e07394c"
-            "706a8bb980b1d7785e5976ec049b46df5f1326af5a2ea6d103fd07c95385ffab0cac"
-            "bc86",
+            (
+                "b109f3bbbc244eb82441917ed06d618b9008dd09b3befd1b5e07394c"
+                "706a8bb980b1d7785e5976ec049b46df5f1326af5a2ea6d103fd07c95385ffab0cac"
+                "bc86"
+            ),
         ),
         (
             UPASS_TABLE,
-            "d91bb0a23d66dca07a1781fd63ae6a05f6919ee5fc368049f350c9f"
-            "293b078a18165d66097cf0d89fdfbeed1ad6e7dba2344e57348cd6d51308c843a06f"
-            "29caf",
+            (
+                "d91bb0a23d66dca07a1781fd63ae6a05f6919ee5fc368049f350c9f"
+                "293b078a18165d66097cf0d89fdfbeed1ad6e7dba2344e57348cd6d51308c843a06f"
+                "29caf"
+            ),
         ),
     ]
 
@@ -668,9 +678,7 @@ class ldap_plaintext_test(HandlerCase):
         def random_password(self):
             # NOTE: this hash currently rejects the empty string.
             while True:
-                pwd = super(
-                    ldap_plaintext_test.FuzzHashGenerator, self
-                ).random_password()
+                pwd = super().random_password()
                 if pwd:
                     return pwd
 
@@ -1522,21 +1530,29 @@ class _sha256_crypt_test(HandlerCase):
         (
             "$5$rounds=10000$saltstringsaltstring",
             "Hello world!",
-            "$5$rounds=10000$saltstringsaltst$3xv.VbSHBb41AL9AvLeujZkZRBAwqFMz2."
-            "opqey6IcA",
+            (
+                "$5$rounds=10000$saltstringsaltst$3xv.VbSHBb41AL9AvLeujZkZRBAwqFMz2."
+                "opqey6IcA"
+            ),
         ),
         (
             "$5$rounds=5000$toolongsaltstring",
             "This is just a test",
-            "$5$rounds=5000$toolongsaltstrin$Un/5jzAHMgOGZ5.mWJpuVolil07guHPvOW8"
-            "mGRcvxa5",
+            (
+                "$5$rounds=5000$toolongsaltstrin$Un/5jzAHMgOGZ5.mWJpuVolil07guHPvOW8"
+                "mGRcvxa5"
+            ),
         ),
         (
             "$5$rounds=1400$anotherlongsaltstring",
-            "a very much longer text to encrypt.  This one even stretches over more"
-            "than one line.",
-            "$5$rounds=1400$anotherlongsalts$Rx.j8H.h8HjEDGomFU8bDkXm3XIUnzyxf12"
-            "oP84Bnq1",
+            (
+                "a very much longer text to encrypt.  This one even stretches over more"
+                "than one line."
+            ),
+            (
+                "$5$rounds=1400$anotherlongsalts$Rx.j8H.h8HjEDGomFU8bDkXm3XIUnzyxf12"
+                "oP84Bnq1"
+            ),
         ),
         (
             "$5$rounds=77777$short",
@@ -1546,8 +1562,10 @@ class _sha256_crypt_test(HandlerCase):
         (
             "$5$rounds=123456$asaltof16chars..",
             "a short string",
-            "$5$rounds=123456$asaltof16chars..$gP3VQ/6X7UUEW3HkBn2w1/Ptq2jxPyzV/"
-            "cZKmF/wJvD",
+            (
+                "$5$rounds=123456$asaltof16chars..$gP3VQ/6X7UUEW3HkBn2w1/Ptq2jxPyzV/"
+                "cZKmF/wJvD"
+            ),
         ),
         (
             "$5$rounds=10$roundstoolow",
@@ -1642,45 +1660,61 @@ class _sha512_crypt_test(HandlerCase):
         (
             "$6$saltstring",
             "Hello world!",
-            "$6$saltstring$svn8UoSVapNtMuq1ukKS4tPQd8iKwSMHWjl/O817G3uBnIFNjnQJu"
-            "esI68u4OTLiBFdcbYEdFCoEOfaS35inz1",
+            (
+                "$6$saltstring$svn8UoSVapNtMuq1ukKS4tPQd8iKwSMHWjl/O817G3uBnIFNjnQJu"
+                "esI68u4OTLiBFdcbYEdFCoEOfaS35inz1"
+            ),
         ),
         (
             "$6$rounds=10000$saltstringsaltstring",
             "Hello world!",
-            "$6$rounds=10000$saltstringsaltst$OW1/O6BYHV6BcXZu8QVeXbDWra3Oeqh0sb"
-            "HbbMCVNSnCM/UrjmM0Dp8vOuZeHBy/YTBmSK6H9qs/y3RnOaw5v.",
+            (
+                "$6$rounds=10000$saltstringsaltst$OW1/O6BYHV6BcXZu8QVeXbDWra3Oeqh0sb"
+                "HbbMCVNSnCM/UrjmM0Dp8vOuZeHBy/YTBmSK6H9qs/y3RnOaw5v."
+            ),
         ),
         (
             "$6$rounds=5000$toolongsaltstring",
             "This is just a test",
-            "$6$rounds=5000$toolongsaltstrin$lQ8jolhgVRVhY4b5pZKaysCLi0QBxGoNeKQ"
-            "zQ3glMhwllF7oGDZxUhx1yxdYcz/e1JSbq3y6JMxxl8audkUEm0",
+            (
+                "$6$rounds=5000$toolongsaltstrin$lQ8jolhgVRVhY4b5pZKaysCLi0QBxGoNeKQ"
+                "zQ3glMhwllF7oGDZxUhx1yxdYcz/e1JSbq3y6JMxxl8audkUEm0"
+            ),
         ),
         (
             "$6$rounds=1400$anotherlongsaltstring",
-            "a very much longer text to encrypt.  This one even stretches over more"
-            "than one line.",
-            "$6$rounds=1400$anotherlongsalts$POfYwTEok97VWcjxIiSOjiykti.o/pQs.wP"
-            "vMxQ6Fm7I6IoYN3CmLs66x9t0oSwbtEW7o7UmJEiDwGqd8p4ur1",
+            (
+                "a very much longer text to encrypt.  This one even stretches over more"
+                "than one line."
+            ),
+            (
+                "$6$rounds=1400$anotherlongsalts$POfYwTEok97VWcjxIiSOjiykti.o/pQs.wP"
+                "vMxQ6Fm7I6IoYN3CmLs66x9t0oSwbtEW7o7UmJEiDwGqd8p4ur1"
+            ),
         ),
         (
             "$6$rounds=77777$short",
             "we have a short salt string but not a short password",
-            "$6$rounds=77777$short$WuQyW2YR.hBNpjjRhpYD/ifIw05xdfeEyQoMxIXbkvr0g"
-            "ge1a1x3yRULJ5CCaUeOxFmtlcGZelFl5CxtgfiAc0",
+            (
+                "$6$rounds=77777$short$WuQyW2YR.hBNpjjRhpYD/ifIw05xdfeEyQoMxIXbkvr0g"
+                "ge1a1x3yRULJ5CCaUeOxFmtlcGZelFl5CxtgfiAc0"
+            ),
         ),
         (
             "$6$rounds=123456$asaltof16chars..",
             "a short string",
-            "$6$rounds=123456$asaltof16chars..$BtCwjqMJGx5hrJhZywWvt0RLE8uZ4oPwc"
-            "elCjmw2kSYu.Ec6ycULevoBK25fs2xXgMNrCzIMVcgEJAstJeonj1",
+            (
+                "$6$rounds=123456$asaltof16chars..$BtCwjqMJGx5hrJhZywWvt0RLE8uZ4oPwc"
+                "elCjmw2kSYu.Ec6ycULevoBK25fs2xXgMNrCzIMVcgEJAstJeonj1"
+            ),
         ),
         (
             "$6$rounds=10$roundstoolow",
             "the minimum number is still observed",
-            "$6$rounds=1000$roundstoolow$kUMsbe306n21p9R.FRkW3IGn.S9NPN0x50YhH1x"
-            "hLsPuWGsUSklZt58jaTfF4ZEQpyUNGc0dqbpBYYBaHHrsX.",
+            (
+                "$6$rounds=1000$roundstoolow$kUMsbe306n21p9R.FRkW3IGn.S9NPN0x50YhH1x"
+                "hLsPuWGsUSklZt58jaTfF4ZEQpyUNGc0dqbpBYYBaHHrsX."
+            ),
         ),
     ]
 

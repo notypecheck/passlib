@@ -139,14 +139,13 @@ known_first_party = ["passlib"]
 
 [tool.deptry.per_rule_ignores]
 DEP001 = [
-    "cloud_sptheme",
     "argon2pure",
     "fastpbkdf2",
     "scrypt",
-    "matplotlib",
 ]
 DEP004 = [
     "django",
+    "properdocs"
 ]
 
 
@@ -189,6 +188,7 @@ ignore = [
     "PLW2901",
     "PLC0415", # `import` should be at the top-level of a file
     "CPY", # flake8-copyright
+    "ICN",
 ]
 
 [tool.ruff.lint.per-file-ignores]

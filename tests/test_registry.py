@@ -268,7 +268,7 @@ class RegistryTest(TestCase):
             # skip some wrappers that don't need independant testing
             if name.startswith("ldap_") and name[5:] in list_crypt_handlers():
                 continue
-            if name in ["roundup_plaintext"]:
+            if name == "roundup_plaintext":
                 continue
             # check the remaining ones all have a handler
             try:
