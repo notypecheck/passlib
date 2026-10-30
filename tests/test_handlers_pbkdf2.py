@@ -48,11 +48,13 @@ class atlassian_pbkdf2_sha1_test(HandlerCase):
 
     known_malformed_hashes = [
         # bad char                                    ---\/
-        "{PKCS5S2}c4xaeTQM0lUieMS3V5voiexyX9XhqC2dBd5ecVy!0IPksHChwoTAVYFrhsgoq8/p"
-        # bad size, missing padding
-        "{PKCS5S2}c4xaeTQM0lUieMS3V5voiexyX9XhqC2dBd5ecVy60IPksHChwoTAVYFrhsgoq8/"
-        # bad size, with correct padding
-        "{PKCS5S2}c4xaeTQM0lUieMS3V5voiexyX9XhqC2dBd5ecVy60IPksHChwoTAVYFrhsgoq8/="
+        (
+            "{PKCS5S2}c4xaeTQM0lUieMS3V5voiexyX9XhqC2dBd5ecVy!0IPksHChwoTAVYFrhsgoq8/p"
+            # bad size, missing padding
+            "{PKCS5S2}c4xaeTQM0lUieMS3V5voiexyX9XhqC2dBd5ecVy60IPksHChwoTAVYFrhsgoq8/"
+            # bad size, with correct padding
+            "{PKCS5S2}c4xaeTQM0lUieMS3V5voiexyX9XhqC2dBd5ecVy60IPksHChwoTAVYFrhsgoq8/="
+        )
     ]
 
 
@@ -92,13 +94,17 @@ class pbkdf2_sha512_test(HandlerCase):
     known_correct_hashes = [
         (
             "password",
-            "$pbkdf2-sha512$1212$RHY0Fr3IDMSVO/RSZyb5ow$eNLfBK.eVozomMr.1gYa1"
-            "7k9B7KIK25NOEshvhrSX.esqY3s.FvWZViXz4KoLlQI.BzY/YTNJOiKc5gBYFYGww",
+            (
+                "$pbkdf2-sha512$1212$RHY0Fr3IDMSVO/RSZyb5ow$eNLfBK.eVozomMr.1gYa1"
+                "7k9B7KIK25NOEshvhrSX.esqY3s.FvWZViXz4KoLlQI.BzY/YTNJOiKc5gBYFYGww"
+            ),
         ),
         (
             UPASS_WAV,
-            "$pbkdf2-sha512$1212$KkbvoKGsAIcF8IslDR6skQ$8be/PRmd88Ps8fmPowCJt"
-            "tH9G3vgxpG.Krjt3KT.NP6cKJ0V4Prarqf.HBwz0dCkJ6xgWnSj2ynXSV7MlvMa8Q",
+            (
+                "$pbkdf2-sha512$1212$KkbvoKGsAIcF8IslDR6skQ$8be/PRmd88Ps8fmPowCJt"
+                "tH9G3vgxpG.Krjt3KT.NP6cKJ0V4Prarqf.HBwz0dCkJ6xgWnSj2ynXSV7MlvMa8Q"
+            ),
         ),
     ]
 
@@ -144,21 +150,25 @@ class grub_pbkdf2_sha512_test(HandlerCase):
         # salt=32 bytes
         (
             UPASS_WAV,
-            "grub.pbkdf2.sha512.10000.BCAC1CEC5E4341C8C511C529"
-            "7FA877BE91C2817B32A35A3ECF5CA6B8B257F751.6968526A"
-            "2A5B1AEEE0A29A9E057336B48D388FFB3F600233237223C21"
-            "04DE1752CEC35B0DD1ED49563398A282C0F471099C2803FBA"
-            "47C7919CABC43192C68F60",
+            (
+                "grub.pbkdf2.sha512.10000.BCAC1CEC5E4341C8C511C529"
+                "7FA877BE91C2817B32A35A3ECF5CA6B8B257F751.6968526A"
+                "2A5B1AEEE0A29A9E057336B48D388FFB3F600233237223C21"
+                "04DE1752CEC35B0DD1ED49563398A282C0F471099C2803FBA"
+                "47C7919CABC43192C68F60"
+            ),
         ),
         # salt=64 bytes
         (
             "toomanysecrets",
-            "grub.pbkdf2.sha512.10000.9B436BB6978682363D5C449B"
-            "BEAB322676946C632208BC1294D51F47174A9A3B04A7E4785"
-            "986CD4EA7470FAB8FE9F6BD522D1FC6C51109A8596FB7AD48"
-            "7C4493.0FE5EF169AFFCB67D86E2581B1E251D88C777B98BA"
-            "2D3256ECC9F765D84956FC5CA5C4B6FD711AA285F0A04DCF4"
-            "634083F9A20F4B6F339A52FBD6BED618E527B",
+            (
+                "grub.pbkdf2.sha512.10000.9B436BB6978682363D5C449B"
+                "BEAB322676946C632208BC1294D51F47174A9A3B04A7E4785"
+                "986CD4EA7470FAB8FE9F6BD522D1FC6C51109A8596FB7AD48"
+                "7C4493.0FE5EF169AFFCB67D86E2581B1E251D88C777B98BA"
+                "2D3256ECC9F765D84956FC5CA5C4B6FD711AA285F0A04DCF4"
+                "634083F9A20F4B6F339A52FBD6BED618E527B"
+            ),
         ),
     ]
 
@@ -179,11 +189,13 @@ class scram_test(HandlerCase):
         # same as 5802 example hash, but with sha-256 & sha-512 added.
         (
             "pencil",
-            "$scram$4096$QSXCR.Q6sek8bf92$"
-            "sha-1=HZbuOlKbWl.eR8AfIposuKbhX30,"
-            "sha-256=qXUXrlcvnaxxWG00DdRgVioR2gnUpuX5r.3EZ1rdhVY,"
-            "sha-512=lzgniLFcvglRLS0gt.C4gy.NurS3OIOVRAU1zZOV4P.qFiVFO2/"
-            "edGQSu/kD1LwdX0SNV/KsPdHSwEl5qRTuZQ",
+            (
+                "$scram$4096$QSXCR.Q6sek8bf92$"
+                "sha-1=HZbuOlKbWl.eR8AfIposuKbhX30,"
+                "sha-256=qXUXrlcvnaxxWG00DdRgVioR2gnUpuX5r.3EZ1rdhVY,"
+                "sha-512=lzgniLFcvglRLS0gt.C4gy.NurS3OIOVRAU1zZOV4P.qFiVFO2/"
+                "edGQSu/kD1LwdX0SNV/KsPdHSwEl5qRTuZQ"
+            ),
         ),
         # test unicode passwords & saslprep (all the passwords below
         # should normalize to the same value: 'IX \xE0')
@@ -216,11 +228,15 @@ class scram_test(HandlerCase):
         # too many sections
         "$scram$4096$QSXCR.Q6sek8bf92$sha-1=HZbuOlKbWl.eR8AfIposuKbhX30$",
         # missing separator
-        "$scram$4096$QSXCR.Q6sek8bf92$sha-1=HZbuOlKbWl.eR8AfIposuKbhX30"
-        "sha-256=qXUXrlcvnaxxWG00DdRgVioR2gnUpuX5r.3EZ1rdhVY",
+        (
+            "$scram$4096$QSXCR.Q6sek8bf92$sha-1=HZbuOlKbWl.eR8AfIposuKbhX30"
+            "sha-256=qXUXrlcvnaxxWG00DdRgVioR2gnUpuX5r.3EZ1rdhVY"
+        ),
         # too many chars in alg name
-        "$scram$4096$QSXCR.Q6sek8bf92$sha-1=HZbuOlKbWl.eR8AfIposuKbhX30,"
-        "shaxxx-190=HZbuOlKbWl.eR8AfIposuKbhX30",
+        (
+            "$scram$4096$QSXCR.Q6sek8bf92$sha-1=HZbuOlKbWl.eR8AfIposuKbhX30,"
+            "shaxxx-190=HZbuOlKbWl.eR8AfIposuKbhX30"
+        ),
         # missing sha-1 alg
         "$scram$4096$QSXCR.Q6sek8bf92$sha-256=HZbuOlKbWl.eR8AfIposuKbhX30",
         # non-iana name

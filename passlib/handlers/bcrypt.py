@@ -761,7 +761,7 @@ class _wrapped_bcrypt(bcrypt):
     """
 
     setting_kwds = tuple(
-        elem for elem in bcrypt.setting_kwds if elem not in ["truncate_error"]
+        elem for elem in bcrypt.setting_kwds if elem != "truncate_error"
     )
     truncate_size: int | None = None
 

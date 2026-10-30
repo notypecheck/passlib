@@ -1,5 +1,12 @@
 name: Lint
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "*"
+  pull_request: {}
+
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -30,3 +37,42 @@ jobs:
         run: uv sync --all-extras --all-groups
 
       - run: uv run ${{ matrix.job }}
+
+  docs-build:
+    needs: lint
+    if: github.event_name == 'push' && github.ref == format('refs/heads/{0}', github.repository.default_branch)
+    runs-on: ubuntu-latest
+    environment: docs
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - name: Set up Python
+        uses: actions/setup-python@v7.1.0
+        with:
+          python-version: 3.14
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v10.3.3
+        with:
+          enable-cache: true
+
+      - name: Install dependencies
+        run: uv sync --all-extras --all-groups
+
+      - name: Build documentation
+        run: uv run properdocs build
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v5.0.0
+        with:
+          path: site
+
+  docs-publish:
+    needs: docs-build
+    runs-on: ubuntu-latest
+    environment: docs
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v5.0.1

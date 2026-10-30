@@ -1,0 +1,163 @@
+site_name: Passlib
+docs_dir: docs
+site_description: "A comprehensive password hashing framework for Python"
+repo_url: https://github.com/notypecheck/passlib
+edit_uri: blob/main/docs/
+strict: true
+exclude_docs: |
+  *.py
+
+hooks:
+  - docs/griffe_warning.py
+
+validation:
+  links:
+    absolute_links: relative_to_docs
+
+theme:
+  name: materialx
+  favicon: assets/logo.ico
+  features:
+    - navigation.expand
+    - navigation.tracking
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+  palette:
+    scheme: default
+    primary: deep orange
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - codehilite
+  - footnotes
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed
+
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          options:
+            extensions:
+              - griffe_typingdoc
+            line_length: 55
+            annotations_path: brief
+            docstring_section_style: list
+            docstring_style: sphinx
+            inherited_members: true
+            members_order: source
+            merge_init_into_class: true
+            separate_signature: true
+            show_root_full_path: false
+
+            show_root_heading: true
+            show_source: false
+            show_signature: true
+            show_bases: false
+            show_signature_annotations: true
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
+            signature_crossrefs: true
+            unwrap_annotated: true
+
+nav:
+  - Introduction: index.md
+  - Getting Started:
+    - Installation: guide/install.md
+    - Overview: guide/overview.md
+    - Quickstart: guide/quickstart.md
+  - Tutorials:
+    - Hash Tutorial: guide/hash-tutorial.md
+    - Context Tutorial: guide/context-tutorial.md
+    - TOTP Tutorial: guide/totp-tutorial.md
+  - API Reference:
+    - Overview: api/index.md
+    - passlib.hash: api/passlib.hash.md
+    - passlib.context: api/passlib.context.md
+    - passlib.ifc: api/passlib.ifc.md
+    - passlib.totp: api/passlib.totp.md
+    - passlib.apps: api/passlib.apps.md
+    - passlib.hosts: api/passlib.hosts.md
+    - passlib.apache: api/passlib.apache.md
+    - passlib.exc: api/passlib.exc.md
+    - passlib.pwd: api/passlib.pwd.md
+    - passlib.registry: api/passlib.registry.md
+    - passlib.ext.django: api/passlib.ext.django.md
+  - Unix Hashes:
+    - bcrypt: api/passlib.hash.bcrypt.md
+    - sha256_crypt: api/passlib.hash.sha256_crypt.md
+    - sha512_crypt: api/passlib.hash.sha512_crypt.md
+    - unix_disabled: api/passlib.hash.unix_disabled.md
+    - md5_crypt: api/passlib.hash.md5_crypt.md
+    - sha1_crypt: api/passlib.hash.sha1_crypt.md
+    - sun_md5_crypt: api/passlib.hash.sun_md5_crypt.md
+    - des_crypt: api/passlib.hash.des_crypt.md
+    - bsdi_crypt: api/passlib.hash.bsdi_crypt.md
+    - bigcrypt: api/passlib.hash.bigcrypt.md
+    - crypt16: api/passlib.hash.crypt16.md
+  - Modular Crypt Hashes:
+    - argon2: api/passlib.hash.argon2.md
+    - bcrypt_sha256: api/passlib.hash.bcrypt_sha256.md
+    - phpass: api/passlib.hash.phpass.md
+    - pbkdf2_digest: api/passlib.hash.pbkdf2_digest.md
+    - scram: api/passlib.hash.scram.md
+    - scrypt: api/passlib.hash.scrypt.md
+    - apr_md5_crypt: api/passlib.hash.apr_md5_crypt.md
+    - cta_pbkdf2_sha1: api/passlib.hash.cta_pbkdf2_sha1.md
+    - dlitz_pbkdf2_sha1: api/passlib.hash.dlitz_pbkdf2_sha1.md
+  - LDAP / RFC 2307 Hashes:
+    - ldap_std: api/passlib.hash.ldap_std.md
+    - ldap_crypt: api/passlib.hash.ldap_crypt.md
+    - ldap_other: api/passlib.hash.ldap_other.md
+    - ldap_pbkdf2_digest: api/passlib.hash.ldap_pbkdf2_digest.md
+    - atlassian_pbkdf2_sha1: api/passlib.hash.atlassian_pbkdf2_sha1.md
+    - fshp: api/passlib.hash.fshp.md
+  - Database Hashes:
+    - mssql2000: api/passlib.hash.mssql2000.md
+    - mssql2005: api/passlib.hash.mssql2005.md
+    - mysql323: api/passlib.hash.mysql323.md
+    - mysql41: api/passlib.hash.mysql41.md
+    - postgres_md5: api/passlib.hash.postgres_md5.md
+    - oracle10: api/passlib.hash.oracle10.md
+    - oracle11: api/passlib.hash.oracle11.md
+  - Windows Hashes:
+    - lmhash: api/passlib.hash.lmhash.md
+    - nthash: api/passlib.hash.nthash.md
+    - msdcc: api/passlib.hash.msdcc.md
+    - msdcc2: api/passlib.hash.msdcc2.md
+  - Cisco Hashes:
+    - cisco_type7: api/passlib.hash.cisco_type7.md
+    - cisco_pix: api/passlib.hash.cisco_pix.md
+    - cisco_asa: api/passlib.hash.cisco_asa.md
+  - Other Hashes:
+    - django_std: api/passlib.hash.django_std.md
+    - grub_pbkdf2_sha512: api/passlib.hash.grub_pbkdf2_sha512.md
+    - hex_digests: api/passlib.hash.hex_digests.md
+    - plaintext: api/passlib.hash.plaintext.md
+  - Internal Modules:
+    - passlib.crypto: api/passlib.crypto.md
+    - passlib.crypto.digest: api/passlib.crypto.digest.md
+    - passlib.crypto.des: api/passlib.crypto.des.md
+    - passlib.utils: api/passlib.utils.md
+    - passlib.utils.binary: api/passlib.utils.binary.md
+    - passlib.utils.des: api/passlib.utils.des.md
+    - passlib.utils.handlers: api/passlib.utils.handlers.md
+    - passlib.utils.pbkdf2: api/passlib.utils.pbkdf2.md
+  - Reference:
+    - FAQ: reference/faq.md
+    - Modular Crypt Format: reference/modular-crypt-format.md
+    - License: reference/license.md
+  - Changelog:
+    - Overview: changelog/index.md
+    - "1.7": changelog/1.7.md
+    - "1.6": changelog/1.6.md
+    - "1.5": changelog/1.5.md
+    - "1.4 & Earlier": changelog/ancient.md

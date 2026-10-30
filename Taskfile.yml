@@ -32,6 +32,14 @@ tasks:
     desc: Perform type-checking
     cmd: "{{.RUNNER}} mypy {{.SOURCES}}"
 
+  docs:
+    desc: Serve documentation locally
+    cmd: "{{.RUNNER}} properdocs serve --dirty --no-strict"
+
+  docs-build:
+    desc: Build documentation
+    cmd: "{{.RUNNER}} properdocs build"
+
   test:
     desc: Run tests
     cmds:

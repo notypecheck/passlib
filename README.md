@@ -29,15 +29,13 @@ A quick example of using passlib to integrate into a new application:
 ```python
 from passlib.context import CryptContext
 
-context = CryptContext(
-    schemes=["sha512_crypt"]
-)
+context = CryptContext(schemes=["sha512_crypt"])
 
 hash = context.hash("password")
 # $6$rounds=656000$jFKvvPmUywlqjSs.$iNeK/OWVry7KThNyzR01xzqZzgk/VA75.sR4yXXblsPAoEugtdO3zn/O4VEG3Izp8l5.//lMGpuRCOqvKknHo1
 
 # Verifying a password
-is_valid = context.verify("password", hash) # True
-
+is_valid = context.verify("password", hash)
+# > True
 ```
 For more details and an extended set of examples, see the full documentation

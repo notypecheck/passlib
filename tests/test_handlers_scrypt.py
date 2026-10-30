@@ -63,8 +63,10 @@ class _scrypt_test(HandlerCase):
                 # salt=b"SodiumChloride"
                 (
                     "pleaseletmein",
-                    "$scrypt$ln=14,r=8,p=1$U29kaXVtQ2hsb3JpZGU"
-                    "$cCO9yzr9c0hGHAbNgf046/2o+7qQT44+qbVD9lRdofI",
+                    (
+                        "$scrypt$ln=14,r=8,p=1$U29kaXVtQ2hsb3JpZGU"
+                        "$cCO9yzr9c0hGHAbNgf046/2o+7qQT44+qbVD9lRdofI"
+                    ),
                 ),
                 #
                 # openwall format (https://gitlab.com/jas/scrypt-unix-crypt/blob/master/unix-scrypt.txt)

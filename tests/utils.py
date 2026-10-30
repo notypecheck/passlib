@@ -677,8 +677,10 @@ class HandlerCase(TestCase):
         ("md5_crypt", "$1$dOHYPKoP$tnxS1T8Q6VVn3kpV8cN6o."),
         (
             "sha512_crypt",
-            "$6$rounds=123456$asaltof16chars..$BtCwjqMJGx5hrJhZywW"
-            "vt0RLE8uZ4oPwcelCjmw2kSYu.Ec6ycULevoBK25fs2xXgMNrCzIMVcgEJAstJeonj1",
+            (
+                "$6$rounds=123456$asaltof16chars..$BtCwjqMJGx5hrJhZywW"
+                "vt0RLE8uZ4oPwcelCjmw2kSYu.Ec6ycULevoBK25fs2xXgMNrCzIMVcgEJAstJeonj1"
+            ),
         ),
     ]
 

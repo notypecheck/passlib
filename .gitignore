@@ -5,8 +5,12 @@
 __pycache__
 
 .coverage
+.coverage.*
 coverage.xml
 
 dist
 
 *.pyc
+
+# ProperDocs
+site

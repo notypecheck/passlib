@@ -663,9 +663,8 @@ class _Argon2Common(  # type: ignore[misc]
 
         # fallback to reporting a malformed hash
         text = str(err)
-        if text not in [
-            "Decoding failed"  # argon2_cffi's default message
-        ]:
+        # argon2_cffi's default message
+        if text != "Decoding failed":
             reason = f"{backend} reported: {text}: hash={hash!r}"
         else:
             reason = repr(hash)
