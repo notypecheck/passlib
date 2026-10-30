@@ -16,9 +16,7 @@ providing full-strength password hashing for multi-user application.
   for details, installation instructions, and examples.
 - See the [changelog](https://github.com/notypecheck/passlib/blob/main/CHANGELOG.md)
   for a description of what's new in Passlib.
-- Visit [PyPI](https://pypi.org/project/passlib) for the latest stable release.
-
-
+- Visit [PyPI](https://pypi.org/project/passlib/) for the latest stable release. (note that versions between 1.7.5 and 1.9.4 were published under [libpass](https://pypi.org/project/libpass/) name)
 
 ## Installation
 ```shell
@@ -39,4 +37,4 @@ hash = context.hash("password")
 is_valid = context.verify("password", hash)
 # > True
 ```
-For more details and an extended set of examples, see the full documentation
+For more details and an extended set of examples, see the [full documentation](https://notypecheck.github.io/passlib/)
