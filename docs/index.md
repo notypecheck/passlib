@@ -6,6 +6,9 @@ as a framework for managing existing password hashes. It's designed to be useful
 for a wide range of tasks, from verifying a hash found in `/etc/shadow`, to
 providing full-strength password hashing for a multi-user application.
 
+!!! note
+    This documentation covers the actively maintained Passlib, developed at [github.com/notypecheck/passlib](https://github.com/notypecheck/passlib) — a continuation of the original project, whose final release was 1.7.4 (2020-10-08).
+
 ## What is Passlib?
 
 Passlib's contents can roughly be grouped into four categories: password hashes,
@@ -68,4 +71,5 @@ See [changelog](changelog/index.md)
 
 - [Latest Docs](https://notypecheck.github.io/passlib/)
 - [Public Repository](https://github.com/notypecheck/passlib)
-- [PyPi](https://pypi.org/project/passlib/)
+- [PyPI: libpass](https://pypi.org/project/libpass/) — versions 1.7.5 through 1.9.4
+- [PyPI: passlib](https://pypi.org/project/passlib/) — versions>=1.9.5

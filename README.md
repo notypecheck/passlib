@@ -4,7 +4,10 @@
 ![PyPI Python Version](https://img.shields.io/pypi/pyversions/passlib?style=for-the-badge)
 
 
-This is a fork of https://foss.heptapod.net/python-libs/passlib
+This is the official repository of Passlib, published on PyPI as
+[passlib](https://pypi.org/project/passlib/). It continues the original
+project at https://foss.heptapod.net/python-libs/passlib (unmaintained since
+its final release, 1.7.4, in 2020).
 
 Passlib is a password hashing library for Python 3, which provides
 cross-platform implementations of over 30 password hashing algorithms, as well
@@ -12,15 +15,26 @@ as a framework for managing existing password hashes. It's designed to be useful
 for a wide range of tasks, from verifying a hash found in /etc/shadow, to
 providing full-strength password hashing for multi-user application.
 
+Versions 1.7.5 through 1.9.4 were published on PyPI as
+[libpass](https://pypi.org/project/libpass/); releases from 1.9.5 onward
+are published under `passlib` again.
+
 - See the [documentation](https://notypecheck.github.io/passlib/)
   for details, installation instructions, and examples.
 - See the [changelog](https://github.com/notypecheck/passlib/blob/main/CHANGELOG.md)
   for a description of what's new in Passlib.
-- Visit [PyPI](https://pypi.org/project/passlib/) for the latest stable release. (note that versions between 1.7.5 and 1.9.4 were published under [libpass](https://pypi.org/project/libpass/) name)
+- Visit [PyPI](https://pypi.org/project/passlib/) for the latest stable release.
 
 ## Installation
 ```shell
 pip install passlib
+```
+
+Available extras:
+```shell
+pip install passlib[argon2]
+pip install passlib[bcrypt]
+pip install passlib[totp]
 ```
 
 ## Usage
