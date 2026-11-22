@@ -107,6 +107,7 @@ packages = [
 package = true
 default-groups = "all"
 exclude-dependencies = ["mkdocs"]
+trusted-publishing = "always"
 
 [tool.uv.workspace]
 members = ["test"]
