@@ -35,7 +35,7 @@ Passlib should work with all operating systems and environments, as it contains 
 !!! note
     Versions 1.7.5 through 1.9.4 were published on PyPI as `libpass`; releases from 1.9.5 onward will be published under `passlib`. Upgrading `libpass` to `1.9.5` installs the official `passlib` as a direct dependency, so `pip install -U libpass` migrates existing installs to the official package.
 
-    Whichever package you install, the import name is unchanged: `from passlib.context import CryptContext`. Until 1.9.5 is released, `pip install passlib` installs 1.7.4 — the final release of the original project — not the current code.
+    Whichever package you install, the import name is unchanged: `from passlib.context import CryptContext`.
 
 To install from PyPI using `pip`:
 
