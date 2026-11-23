@@ -18,17 +18,17 @@ Passlib should work with all operating systems and environments, as it contains 
 - [`bcrypt`](https://pypi.org/project/bcrypt/)
    If installed, this will be used to handle `passlib.hash.bcrypt` and
    `passlib.hash.bcrypt_sha256` hashes.  
-   Use `pip install libpass[bcrypt]` to get the recommended bcrypt setup.
+   Use `pip install passjlib[bcrypt]` to get the recommended bcrypt setup.
 
 - [`argon2_cffi`](https://pypi.org/project/argon2-cffi/)
    If `argon2_cffi` is installed, it will be used to provide
    support for the `passlib.hash.argon2` hash algorithm.  
-   Use ``pip install libpass[argon2]`` to get the recommended argon2 setup.
+   Use ``pip install passjlib[argon2]`` to get the recommended argon2 setup.
 
 - [`cryptography`](https://pypi.org/project/cryptography/)
    If installed, will be used to enable encryption of TOTP secrets for storage
    (see `passlib.totp`).  
-   Use ``pip install libpass[totp]`` to get the recommended TOTP setup.
+   Use ``pip install passjlib[totp]`` to get the recommended TOTP setup.
 
 ## Installation Instructions
 
@@ -40,7 +40,7 @@ Passlib should work with all operating systems and environments, as it contains 
 To install from PyPI using `pip`:
 
 ```shell
-pip install libpass
+pip install passlib
 ```
 
 From 1.9.5 onward, install with `pip install passlib`.
@@ -48,7 +48,7 @@ From 1.9.5 onward, install with `pip install passlib`.
 As noted above, you can ensure you have feature-specific extras installed via any of:
 
 ```shell
-pip install libpass[argon2]
-pip install libpass[bcrypt]
-pip install libpass[totp]
+pip install passlib[argon2]
+pip install passlib[bcrypt]
+pip install passlib[totp]
 ```

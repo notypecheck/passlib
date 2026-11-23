@@ -71,5 +71,5 @@ See [changelog](changelog/index.md)
 
 - [Latest Docs](https://notypecheck.github.io/passlib/)
 - [Public Repository](https://github.com/notypecheck/passlib)
-- [PyPI: libpass](https://pypi.org/project/libpass/) — versions 1.7.5 through 1.9.4
 - [PyPI: passlib](https://pypi.org/project/passlib/) — versions>=1.9.5
+- [PyPI: libpass](https://pypi.org/project/libpass/) — versions 1.7.5 through 1.9.4
